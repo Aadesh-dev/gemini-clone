@@ -41,6 +41,10 @@ body {
   transition: width 0.3s ease-in-out;
 }
 
+.text {
+  color: #1b1c1d;
+}
+
 
 @layer base {
   ul, ol {

@@ -53,6 +53,11 @@ const Sidebar = () => {
             <span className={newChatTextClass}>New chat</span>
           </button>
         </div>
+        <div className="px-3 pb-2">
+          <div className="pl-3 py-2">
+            <h1 className="text text-[14px] font-medium">Recent</h1>
+          </div>
+        </div>
       </div>
     </div>
   );

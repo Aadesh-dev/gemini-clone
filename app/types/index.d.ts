@@ -16,7 +16,7 @@ declare type UserType = {
   username: string;
   firstName: string | null;
   lastName: string | null;
-}
+};
 
 // ====== CHAT ======
 declare type ChatType = {
@@ -28,12 +28,15 @@ declare type ChatType = {
       question: string;
       answer: string;
     }
-  ]
-}
+  ];
+};
 
-// declare type UpdateUserParams = {
-//   firstName: string | null;
-//   lastName: string | null;
-//   username: string;
-//   photo: string;
-// };
+declare type ChatInfo = {
+  chatID?: string;
+  initialQuestion: string;
+};
+
+declare type ChatInfoShared = {
+  chatInfo: ChatInfo?;
+  setChatInfo: (chatInfo: ChatInfo) => void;
+};

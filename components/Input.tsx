@@ -1,7 +1,12 @@
 "use client";
 
 import { text } from "@/lib/actions/chat.actions";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useRef,
+  useState
+} from "react";
 
 type ChatEntry = {
   prompt: string;
