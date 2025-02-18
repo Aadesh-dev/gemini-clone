@@ -1,40 +1,49 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ChatInfoContext, UserContext } from "@/lib/contexts";
+import { ChatType } from "@/app/types";
 import Image from "next/image";
-import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import Input from "./Input";
 
-type ChatEntry = {
-  prompt: string;
-  answer: string;
-};
-
 const Chat = () => {
-  const [chat, setChat] = useState<ChatEntry[]>([]);
-  //const user = useContext(UserContext);
-  const context = useContext(ChatInfoContext);
-
-  if (!context) {
-    throw new Error("Chat must be used within a ChatInfoContext.Provider");
-  }
-
-  const { setChatInfo } = context;
+  const [chat, setChat] = useState<ChatType | null>(null);
+  const { id } = useParams(); // Get the dynamic ID from the URL
 
   useEffect(() => {
-    if (chat.length === 1) {
-      setChatInfo({ initialQuestion: chat[0].prompt });
+    const chatID = Array.isArray(id) ? id[0] : id;
+
+    if (!chat) {
+      const existingChat = localStorage.getItem(chatID);
+      if (existingChat) {
+        const existingChatObj = JSON.parse(existingChat);
+        const chat: ChatType = {
+          chatID,
+          userID: existingChatObj.userID,
+          title: existingChatObj.title,
+          messages: existingChatObj.messages
+        }
+        setChat(chat);
+      } else {
+        const newChat: ChatType = {
+          chatID,
+          userID: null,
+          title: "",
+          messages: [],
+        };
+        setChat(newChat);
+        localStorage.setItem(chatID, JSON.stringify(newChat));
+      }
     }
-  }, [chat, setChatInfo]);
+  }, [chat]);
 
   return (
     <div className="flex flex-col justify-between items-center w-[-webkit-fill-available]">
-      {chat.length ? (
+      {chat && chat.messages.length ? (
         <div className="w-full relative top-[66px] h-[calc(100vh-184px)] overflow-y-auto">
           <div className="max-w-[724px] w-full mx-auto">
-            {chat.map((chatItem: ChatEntry, index: number) => (
+            {chat.messages.map((chatItem, index: number) => (
               <React.Fragment key={index}>
                 <div className="flex py-2 mb-8">
                   <div className="mr-[20px]">
@@ -47,7 +56,7 @@ const Chat = () => {
                   </div>
                   <div>
                     <div className="prose">
-                      <ReactMarkdown>{chatItem.prompt}</ReactMarkdown>
+                      <ReactMarkdown>{chatItem?.question}</ReactMarkdown>
                     </div>
                   </div>
                 </div>
@@ -81,7 +90,7 @@ const Chat = () => {
                     </svg>
                   </div>
                   <div className="prose">
-                    <ReactMarkdown>{chatItem.answer}</ReactMarkdown>
+                    <ReactMarkdown>{chatItem?.answer}</ReactMarkdown>
                   </div>
                 </div>
               </React.Fragment>
@@ -90,15 +99,17 @@ const Chat = () => {
         </div>
       ) : (
         <div className="grid place-items-center w-full relative top-[66px] h-[calc(100vh-184px)]">
-          <p className="text-transparent bg-[length:400%_100%] bg-clip-text [-webkit-text-fill-color:transparent] text-[32px] leading-10 font-medium bg-[linear-gradient(74deg,_#4285f4_0%,_#9b72cb_9%,_#d96570_20%,_#d96570_24%,_#9b72cb_35%,_#4285f4_44%,_#9b72cb_50%,_#d96570_56%,_#ffffff_75%,_#ffffff_100%)]">
+          <p className="text-transparent select-none bg-[length:400%_100%] bg-clip-text [-webkit-text-fill-color:transparent] text-[32px] leading-10 font-medium bg-[linear-gradient(74deg,_#4285f4_0%,_#9b72cb_9%,_#d96570_20%,_#d96570_24%,_#9b72cb_35%,_#4285f4_44%,_#9b72cb_50%,_#d96570_56%,_#ffffff_75%,_#ffffff_100%)]">
             Hello, Guest
           </p>
         </div>
       )}
       <div className="flex flex-col items-center w-[-webkit-fill-available] fixed bottom-0 bg-white">
-        <Input setChat={setChat} />
+        <Input chat={chat} setChat={setChat} />
         <p className="my-4 text-xs text-[#444746] leading-4 h-4">
-          {chat.length ? "Gemini can make mistakes, so double-check it" : ""}
+          {chat && chat.messages.length
+            ? "Gemini can make mistakes, so double-check it"
+            : ""}
         </p>
       </div>
     </div>

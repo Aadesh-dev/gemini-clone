@@ -20,23 +20,21 @@ declare type UserType = {
 
 // ====== CHAT ======
 declare type ChatType = {
-  _id: Schema.Types.ObjectId;
-  userID: Schema.Types.ObjectId;
+  chatID: string;
+  userID: Schema.Types.ObjectId?;
   title: string;
-  messages: [
-    {
-      question: string;
-      answer: string;
-    }
-  ];
+  messages: {
+    question: string;
+    answer: string;
+  }[];
 };
 
 declare type ChatInfo = {
-  chatID?: string;
-  initialQuestion: string;
+  chatID: string;
+  title: string;
 };
 
-declare type ChatInfoShared = {
+declare type ChatInfoContextType = {
   chatInfo: ChatInfo?;
   setChatInfo: (chatInfo: ChatInfo) => void;
 };

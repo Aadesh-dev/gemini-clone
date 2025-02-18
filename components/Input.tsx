@@ -1,27 +1,36 @@
 "use client";
 
-import { text } from "@/lib/actions/chat.actions";
+import { ChatType } from "@/app/types";
+import { getChatTitle, getTextAnswer } from "@/lib/actions/chat.actions";
+import { ChatInfoContext } from "@/lib/contexts";
 import React, {
   Dispatch,
   SetStateAction,
+  useContext,
+  useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 
-type ChatEntry = {
-  prompt: string;
-  answer: string;
-};
-
 const Input = ({
+  chat,
   setChat,
 }: {
-  setChat: Dispatch<SetStateAction<ChatEntry[]>>;
+  chat: ChatType | null;
+  setChat: Dispatch<SetStateAction<ChatType | null>>;
 }) => {
   const [inputFocused, setInputFocused] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [height, setHeight] = useState(24);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const context = useContext(ChatInfoContext);
+
+  if (!context) {
+    throw new Error("Chat must be used within a ChatInfoContext.Provider");
+  }
+
+  const { setChatInfo } = context;
 
   const onPromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -42,11 +51,44 @@ const Input = ({
   const onPromptSubmit = async (): Promise<void> => {
     const tempPrompt = prompt;
     setPrompt("");
-    const answer = await text(prompt);
-    setChat((prevChat: ChatEntry[]) => [
-      ...prevChat,
-      { prompt: tempPrompt, answer },
-    ]);
+    const answer = await getTextAnswer(prompt);
+    let title = chat ? chat.title : "";
+    const chatID = chat ? chat.chatID : "";
+
+    if (chat && !chat.messages.length) {
+      title = await getChatTitle(tempPrompt);
+      setChatInfo({ chatID: chat.chatID, title });
+    }
+
+    setChat((prevChat) => {
+      if (!prevChat) return null; // Handle the case where chat is null
+
+      return {
+        ...prevChat, // Ensure immutability
+        title,
+        messages: [
+          ...prevChat.messages,
+          {
+            question: tempPrompt,
+            answer,
+          },
+        ],
+      };
+    });
+
+    const existingChat = localStorage.getItem(chatID);
+    if (existingChat) {
+      const existingChatObj = JSON.parse(existingChat);
+      existingChatObj.title = title;
+      existingChatObj.messages = [
+        ...existingChatObj.messages,
+        {
+          question: tempPrompt,
+          answer,
+        },
+      ];
+      localStorage.setItem(chatID, JSON.stringify(existingChatObj));
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

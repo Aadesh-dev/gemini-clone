@@ -18,6 +18,10 @@ const MessageSchema = new Schema(
 // Chat schema for conversations
 const ChatSchema = new Schema(
   {
+    chatID: {
+      type: String,
+      required: true,
+    },
     userID: {
       type: Schema.Types.ObjectId, // Link to the User model
       ref: "User",

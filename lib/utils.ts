@@ -30,7 +30,7 @@ export const handleError = (error: unknown) => {
   }
 };
 
-export const generateUserId = (length: number = 10): string => {
+export const generateRandomID = (length: number = 10): string => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let userId = "";
   const bytes = crypto.randomBytes(length);
