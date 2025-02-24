@@ -1,3 +1,5 @@
+"use client";
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import crypto from "crypto";
@@ -28,7 +30,7 @@ export const handleError = (error: unknown) => {
   }
 };
 
-export const generateUserId = (length: number = 10): string => {
+export const generateRandomID = (length: number = 10): string => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let userId = "";
   const bytes = crypto.randomBytes(length);
@@ -37,4 +39,10 @@ export const generateUserId = (length: number = 10): string => {
   }
   return userId;
 };
+
+export const  getCookie = (name: string): string => {
+  const cookies = document.cookie.split("; ");
+  const cookie = cookies.find((row) => row.startsWith(`${name}=`));
+  return cookie ? cookie.split("=")[1] : "";
+}
 

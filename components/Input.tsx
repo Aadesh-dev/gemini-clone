@@ -1,25 +1,54 @@
 "use client";
 
-import { text } from "@/lib/actions/chat.actions";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-
-type ChatEntry = {
-  prompt: string;
-  answer: string;
-};
+import { ChatType } from "@/app/types";
+import { getChatTitle } from "@/lib/actions/chat.actions";
+import { ChatInfoContext } from "@/lib/contexts";
+import { loadChat } from "@/tools/chat-store";
+import { ChatRequestOptions } from "ai";
+import React, {
+  useContext,
+  useRef,
+  useState
+} from "react";
 
 const Input = ({
-  setChat,
+  chatID,
+  input,
+  chat,
+  handleInputChange,
+  handleSubmit,
 }: {
-  setChat: Dispatch<SetStateAction<ChatEntry[]>>;
+  chatID: string;
+  input: string;
+  chat: ChatType
+  handleInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => void;
+  handleSubmit: (
+    event?: {
+      preventDefault?: () => void;
+    },
+    chatRequestOptions?: ChatRequestOptions
+  ) => void;
 }) => {
   const [inputFocused, setInputFocused] = useState(false);
-  const [prompt, setPrompt] = useState("");
+  const [title, setTitle] = useState(chat.title);
   const [height, setHeight] = useState(24);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const context = useContext(ChatInfoContext);
+
+  if (!context) {
+    throw new Error("Chat must be used within a ChatInfoContext.Provider");
+  }
+
+  const { setChatInfo } = context;
+
   const onPromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
+    //setPrompt(e.target.value);
+    handleInputChange(e);
     const textarea = textareaRef.current;
     if (textarea) {
       // Reset height to measure the content height accurately
@@ -34,14 +63,21 @@ const Input = ({
     }
   };
 
-  const onPromptSubmit = async (): Promise<void> => {
-    const tempPrompt = prompt;
-    setPrompt("");
-    const answer = await text(prompt);
-    setChat((prevChat: ChatEntry[]) => [
-      ...prevChat,
-      { prompt: tempPrompt, answer },
-    ]);
+  const onPromptSubmit = async (event?: {
+    preventDefault?: () => void;
+  }): Promise<void> => {
+    //let title = chat.title;
+    if (!title) {
+      const newTitle = await getChatTitle(input);
+      setChatInfo({ chatID, title: newTitle });
+      setTitle(newTitle)
+    }
+
+    handleSubmit(event, {
+      body: {
+        title,
+      },
+    });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -58,14 +94,11 @@ const Input = ({
           ? "bg-[var(--text-focused-background)]"
           : "bg-[var(--text-background)]"
       } py-[4px] pl-[26px] pr-[12px]`}
-      onSubmit={(e) => {
-        e.preventDefault();
-        onPromptSubmit();
-      }}
+      onSubmit={onPromptSubmit}
       style={{ borderRadius: height <= 24 ? 32 : 16 }}
     >
       <textarea
-        value={prompt}
+        value={input}
         ref={textareaRef}
         rows={1}
         placeholder="Ask Gemini"
@@ -78,8 +111,8 @@ const Input = ({
         onKeyDown={handleKeyDown}
       />
       <button
-        className={`ml-2 px-2 py-[8px] h-10 hover:bg-gray-200 rounded-full ${
-          prompt
+        className={`ml-2 px-2 py-[8px] h-10 hover:bg-gray-200 rounded-full cursor-pointer ${
+          input
             ? "transition-all duration-500 opacity-100 scale-100 visible pointer-events-auto"
             : "transition-none opacity-0 scale-75 invisible pointer-events-none"
         }`}

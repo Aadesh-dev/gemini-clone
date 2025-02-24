@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --text: 31, 31, 31;
@@ -39,6 +40,10 @@ body {
 
 .transition-width {
   transition: width 0.3s ease-in-out;
+}
+
+.text {
+  color: #1b1c1d;
 }
 
 
@@ -109,11 +114,11 @@ body {
   } 
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */

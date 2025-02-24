@@ -1,3 +1,4 @@
+import { Message } from '@ai-sdk/react';
 import { Schema } from "mongoose";
 
 // ====== USER ======
@@ -16,24 +17,22 @@ declare type UserType = {
   username: string;
   firstName: string | null;
   lastName: string | null;
-}
+};
 
 // ====== CHAT ======
 declare type ChatType = {
-  _id: Schema.Types.ObjectId;
-  userID: Schema.Types.ObjectId;
+  chatID: string;
+  userID: Schema.Types.ObjectId?;
   title: string;
-  messages: [
-    {
-      question: string;
-      answer: string;
-    }
-  ]
-}
+  messages: Message[];
+};
 
-// declare type UpdateUserParams = {
-//   firstName: string | null;
-//   lastName: string | null;
-//   username: string;
-//   photo: string;
-// };
+declare type ChatInfo = {
+  chatID: string;
+  title: string;
+};
+
+declare type ChatInfoContextType = {
+  chatInfo: ChatInfo?;
+  setChatInfo: (chatInfo: ChatInfo) => void;
+};
