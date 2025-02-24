@@ -1,12 +1,17 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Image from "next/image";
 
 const ModelsDialog = () => {
   return (
     <Dialog>
-      <DialogTrigger className="hover:bg-gray-200 flex items-center rounded-lg py-1 px-2 h-10 gap-1">
+      <DialogTrigger className="hover:bg-gray-200 flex items-center rounded-lg py-1 px-2 h-10 gap-1 cursor-pointer">
         <span className="text-[#1B1C1D] text-[20px] leading-7">Gemini</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +24,8 @@ const ModelsDialog = () => {
         </svg>
       </DialogTrigger>
       <DialogContent className="top-[58px] left-[336px] bg-[#f0f4f9] w-80 py-2 px-0 gap-0 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)]">
-        <button className="flex gap-3 h-12 items-center hover:bg-gray-200 px-4">
+        <DialogTitle className="sr-only">Change Gemini model</DialogTitle>
+        <button className="flex gap-3 h-12 items-center hover:bg-gray-200 px-4 cursor-pointer">
           <Image
             alt="Gemini logo"
             width={24}
@@ -45,7 +51,7 @@ const ModelsDialog = () => {
         </button>
         <div className="flex items-center">
           <button
-            className="flex gap-3 h-12 items-center px-4 opacity-[0.38] w-full"
+            className="flex gap-3 h-12 items-center px-4 opacity-[0.38] w-full cursor-pointer"
             disabled
           >
             <Image
@@ -68,7 +74,7 @@ const ModelsDialog = () => {
                 "_blank"
               )
             }
-            className="text-[#0842A0] bg-[#e9eef6] hover:bg-[rgba(100,149,237,0.2)] px-6 mr-4 rounded-full h-10 text-[14px] font-medium hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)]"
+            className="text-[#0842A0] bg-[#e9eef6] hover:bg-[rgba(100,149,237,0.2)] px-6 mr-4 rounded-full h-10 text-[14px] font-medium hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)] cursor-pointer"
           >
             Upgrade
           </button>

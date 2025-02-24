@@ -1,10 +1,7 @@
-"use client";
-
+import { createChat } from "@/tools/chat-store";
 import { redirect } from "next/navigation";
-//import { generateRandomID } from "@/lib/utils";
-import { generateId } from 'ai';
 
-export default function AppHome() {
-  const chatId = generateId();
-  redirect(`/app/${chatId}`);
+export default async function AppHome() {
+  const chatID = await createChat(); // create a new chat
+  redirect(`/app/${chatID}`);
 }

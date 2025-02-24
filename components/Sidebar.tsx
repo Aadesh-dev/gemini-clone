@@ -2,7 +2,6 @@
 
 import { ChatInfo } from "@/app/types";
 import { ChatInfoContext } from "@/lib/contexts";
-//import { generateRandomID } from "@/lib/utils";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -20,7 +19,7 @@ const Sidebar = () => {
 
   const { chatInfo } = context;
 
-  const newChatButtonClass = `rounded-[20px] mx-2 px-2 bg-[#dde3ea] hover:bg-[rgba(100,149,237,0.2)] flex items-center font-medium h-10 transition-all duration-300 ease-in-out overflow-hidden ${
+  const newChatButtonClass = `rounded-[20px] mx-2 px-2 bg-[#dde3ea] hover:bg-[rgba(100,149,237,0.2)] flex items-center font-medium h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer ${
     expanded ? "w-auto" : "w-10 rounded-full"
   }`;
 
@@ -33,8 +32,7 @@ const Sidebar = () => {
   } px-3 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
 
   const newChat = () => {
-    const chatId = generateId();
-    router.push(`/app/${chatId}`);
+    router.push(`/app/`);
   };
 
   useEffect(() => {
@@ -54,7 +52,7 @@ const Sidebar = () => {
       <div className="h-12 mt-3 ml-4 flex items-center">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="h-10 w-10 p-2 rounded-full hover:bg-gray-200 flex justify-center items-center"
+          className="h-10 w-10 p-2 rounded-full hover:bg-gray-200 flex justify-center items-center cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -86,12 +84,12 @@ const Sidebar = () => {
           <div className="pl-3 py-2">
             <h1 className="text text-[14px] font-medium">Recent</h1>
           </div>
-          {chats.map((chat) => (
-            <div className="text-[#575B5F] text-[14px]">
+          {chats.map((chat, index) => (
+            <div key={index} className="text-[#575B5F] text-[14px]">
               <div className="relative">
                 <button
                   onClick={() => router.push(`/app/${chat.chatID}`)}
-                  className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left"
+                  className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left cursor-pointer"
                 >
                   <div className="flex items-center w-6 h-6">
                     <svg

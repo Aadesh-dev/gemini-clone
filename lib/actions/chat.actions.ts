@@ -2,8 +2,8 @@
 
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
-import { connectToDatabase } from "../database/mongoose";
 import Chat from "../database/models/chat.model";
+import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
 
 // READ

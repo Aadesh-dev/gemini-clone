@@ -1,3 +1,4 @@
+import { Message } from '@ai-sdk/react';
 import { Schema } from "mongoose";
 
 // ====== USER ======
@@ -23,10 +24,7 @@ declare type ChatType = {
   chatID: string;
   userID: Schema.Types.ObjectId?;
   title: string;
-  messages: {
-    question: string;
-    answer: string;
-  }[];
+  messages: Message[];
 };
 
 declare type ChatInfo = {
