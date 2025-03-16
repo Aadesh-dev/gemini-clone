@@ -1,4 +1,4 @@
-import { saveChat } from "@/tools/chat-store";
+import { updateChatByID } from "@/lib/actions/chat.actions";
 import { google } from "@ai-sdk/google";
 import { streamText, appendResponseMessages } from "ai";
 
@@ -6,10 +6,10 @@ import { streamText, appendResponseMessages } from "ai";
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages, id, title } = await req.json();
+  const { messages, id, title, guest } = await req.json();
 
   const result = streamText({
-    model: google("gemini-1.5-flash-latest"),
+    model: google("gemini-2.0-flash"),
     system: "You are a helpful assistant.",
     messages,
     onFinish({ response }) {
@@ -17,13 +17,14 @@ export async function POST(req: Request) {
         messages,
         responseMessages: response.messages,
       });
-      saveChat({
+      updateChatByID({
         chatID: id,
         messages: appendResponseMessages({
           messages,
           responseMessages: response.messages,
         }),
         title,
+        guest
       });
     },
   });

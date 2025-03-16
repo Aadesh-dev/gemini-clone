@@ -3,7 +3,6 @@
 import { ChatType } from "@/app/types";
 import { getChatTitle } from "@/lib/actions/chat.actions";
 import { ChatInfoContext } from "@/lib/contexts";
-import { loadChat } from "@/tools/chat-store";
 import { ChatRequestOptions } from "ai";
 import React, {
   useContext,
@@ -15,12 +14,14 @@ const Input = ({
   chatID,
   input,
   chat,
+  guest,
   handleInputChange,
   handleSubmit,
 }: {
   chatID: string;
   input: string;
-  chat: ChatType
+  chat: ChatType;
+  guest: boolean;
   handleInputChange: (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -33,12 +34,16 @@ const Input = ({
     chatRequestOptions?: ChatRequestOptions
   ) => void;
 }) => {
+  //State
   const [inputFocused, setInputFocused] = useState(false);
   const [title, setTitle] = useState(chat.title);
   const [height, setHeight] = useState(24);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  //Context
   const context = useContext(ChatInfoContext);
+
+  //Other
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (!context) {
     throw new Error("Chat must be used within a ChatInfoContext.Provider");
@@ -66,16 +71,16 @@ const Input = ({
   const onPromptSubmit = async (event?: {
     preventDefault?: () => void;
   }): Promise<void> => {
-    //let title = chat.title;
-    if (!title) {
+    if (title === "New Chat") {
       const newTitle = await getChatTitle(input);
-      setChatInfo({ chatID, title: newTitle });
-      setTitle(newTitle)
+      setChatInfo({ _id: chatID, title: newTitle });
+      setTitle(newTitle);
     }
 
     handleSubmit(event, {
       body: {
         title,
+        guest
       },
     });
   };

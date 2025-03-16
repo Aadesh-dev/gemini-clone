@@ -1,23 +1,27 @@
 "use server";
 
-import { google } from "@ai-sdk/google";
-import { generateText } from "ai";
-import { connectToDatabase } from "../database/mongoose";
+import { UserType } from "@/app/types";
 import User from "../database/models/user.model";
+import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
-import { CreateUserParams } from "@/app/types";
+import { revalidatePath } from "next/cache";
 
 //CREATE
-export async function createUser(user: CreateUserParams) {
+export async function createUser(user: {
+  clerkID: string;
+  email: string;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+}): Promise<UserType> {
+  let createdUser;
   try {
     await connectToDatabase();
-
-    const newUser = await User.create(user);
-
-    return JSON.parse(JSON.stringify(newUser));
+    createdUser = await User.create(user);
   } catch (error) {
     handleError(error);
   }
+  return JSON.parse(JSON.stringify(createdUser));
 }
 
 //READ
@@ -27,10 +31,56 @@ export async function getUserByClerkID(clerkID: string) {
 
     const user = await User.findOne({ clerkID });
 
-    //if (!user) throw new Error("User not found");
+    if (!user) throw new Error("User not found");
 
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
   }
+}
+
+// UPDATE
+export async function updateUser(
+  clerkID: string,
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+    username: string;
+  }
+): Promise<UserType> {
+  let updatedUser;
+
+  try {
+    await connectToDatabase();
+
+    updatedUser = await User.findOneAndUpdate({ clerkID }, user);
+
+    if (!updatedUser) throw new Error("User update failed");
+  } catch (error) {
+    handleError(error);
+  }
+  return JSON.parse(JSON.stringify(updatedUser));
+}
+
+// DELETE
+export async function deleteUser(clerkID: string): Promise<UserType | null> {
+  let deletedUser;
+
+  try {
+    await connectToDatabase();
+
+    // Find user to delete
+    const userToDelete = await User.findOne({ clerkID });
+
+    if (!userToDelete) {
+      throw new Error("User not found");
+    }
+
+    // Delete user
+    deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    //revalidatePath("/");
+  } catch (error) {
+    handleError(error);
+  }
+  return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
 }

@@ -1,17 +1,9 @@
-import { Message } from '@ai-sdk/react';
+import { Message } from "@ai-sdk/react";
 import { Schema } from "mongoose";
 
 // ====== USER ======
-declare type CreateUserParams = {
-  clerkID: string;
-  email: string;
-  username: string;
-  firstName: string | null;
-  lastName: string | null;
-};
-
 declare type UserType = {
-  _id: Schema.Types.ObjectId;
+  _id: string;
   clerkID: string;
   email: string;
   username: string;
@@ -21,14 +13,20 @@ declare type UserType = {
 
 // ====== CHAT ======
 declare type ChatType = {
-  chatID: string;
-  userID: Schema.Types.ObjectId?;
+  _id: string;
+  user:
+    | {
+        _id: string;
+        clerkID: string;
+        firstName: string;
+      }
+    | string;
   title: string;
   messages: Message[];
 };
 
 declare type ChatInfo = {
-  chatID: string;
+  _id: string;
   title: string;
 };
 
