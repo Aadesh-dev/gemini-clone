@@ -1,8 +1,8 @@
 import Chat from "@/components/Chat";
 import { getChatByID } from "@/lib/actions/chat.actions";
-import { Message } from "@ai-sdk/react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 const Page = async ({
   params,
@@ -20,7 +20,12 @@ const Page = async ({
   //const chat = await getChatByID(id);
   const chat = await getChatByID(id, guest ? true : false);
   const initialMessages = chat.messages;
-  return <Chat chatID={id} initialMessages={initialMessages} chat={chat} />;
+  
+  return (
+    <Suspense>
+      <Chat chatID={id} initialMessages={initialMessages} chat={chat} />
+    </Suspense>
+  );
 };
 
 export default Page;
