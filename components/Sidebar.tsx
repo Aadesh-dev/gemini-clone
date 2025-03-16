@@ -1,17 +1,25 @@
 "use client";
 
 import { ChatInfo } from "@/app/types";
+import { getChatsByClerkID } from "@/lib/actions/chat.actions";
 import { ChatInfoContext } from "@/lib/contexts";
-import { generateId } from "ai";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
 const Sidebar = () => {
+  //State
   const [expanded, setExpanded] = useState(true);
   const [chats, setChats] = useState<ChatInfo[]>([]);
-  const router = useRouter();
 
+  //Context
   const context = useContext(ChatInfoContext);
+
+  //Other
+  const router = useRouter();
+  const { userId, isSignedIn } = useAuth();
+  const searchParams = useSearchParams();
+  const guest = searchParams.get("guest") ? true : false;
 
   if (!context) {
     throw new Error("Chat must be used within a ChatInfoContext.Provider");
@@ -32,8 +40,20 @@ const Sidebar = () => {
   } px-3 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
 
   const newChat = () => {
-    router.push(`/app/`);
+    if(guest) {
+      router.push("/app?guest=true");
+    } else {
+      router.push("/app/");
+    }
   };
+
+  useEffect(() => {
+    if(isSignedIn) {
+      getChatsByClerkID(userId).then(chats => {
+        setChats(chats);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (chatInfo) {
@@ -88,7 +108,7 @@ const Sidebar = () => {
             <div key={index} className="text-[#575B5F] text-[14px]">
               <div className="relative">
                 <button
-                  onClick={() => router.push(`/app/${chat.chatID}`)}
+                  onClick={() => router.push(`/app/${chat._id}`)}
                   className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left cursor-pointer"
                 >
                   <div className="flex items-center w-6 h-6">

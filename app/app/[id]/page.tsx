@@ -1,14 +1,26 @@
 import Chat from "@/components/Chat";
-import { loadChat } from "@/tools/chat-store";
-import { Message } from '@ai-sdk/react';
+import { getChatByID } from "@/lib/actions/chat.actions";
+import { Message } from "@ai-sdk/react";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-const Page = async (props: { params: Promise<{ id: string }> }) => {
-  const { id } = await props.params;
-  const chat = await loadChat(id);
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const { userId } = await auth();
+  const { guest } = await searchParams;
+  if (!userId && !guest) {
+    redirect("/");
+  }
+  const { id } = await params;
+  //const chat = await getChatByID(id);
+  const chat = await getChatByID(id, guest ? true : false);
   const initialMessages = chat.messages;
-  return (
-    <Chat chatID={id} initialMessages={initialMessages} chat={chat} />
-  );
+  return <Chat chatID={id} initialMessages={initialMessages} chat={chat} />;
 };
 
 export default Page;

@@ -1,29 +1,43 @@
 import { Schema, model, models } from "mongoose";
 
+const PartsSchema = new Schema(
+  {
+    type: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+  }
+);
+
 // Message schema for individual messages
 const MessageSchema = new Schema(
   {
-    question: {
-      type: String, // User's prompt
+    id: {
+      type: String,
       required: true,
     },
-    answer: {
-      type: String, // LLM's response
+    createdAt: { type: Date, default: Date.now },
+    role: {
+      type: String,
       required: true,
     },
-  },
-  { timestamps: true, _id: false } // No individual _id for each message
+    content: {
+      type: String,
+      required: true,
+    },
+    parts: [PartsSchema],
+  }
 );
 
 // Chat schema for conversations
 const ChatSchema = new Schema(
   {
-    chatID: {
-      type: String,
-      required: true,
-    },
-    userID: {
-      type: Schema.Types.ObjectId, // Link to the User model
+    user: {
+      type: Schema.Types.Mixed, // Link to the User model
       ref: "User",
       required: true,
     },
