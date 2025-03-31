@@ -1,5 +1,6 @@
 "use client";
 
+import { generateRandomID } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,8 @@ const LandingPage = () => {
   const router = useRouter();
   
   const guestSignIn = () => {
-    router.push("/app?guest=true");
+    const userID = generateRandomID();
+    router.push(`/app?guest=true&userID=${userID}`);
   };
 
   return (

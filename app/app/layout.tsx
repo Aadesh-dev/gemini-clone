@@ -4,6 +4,7 @@ import ModelsDialog from "@/components/ModelsDialog";
 import { Suspense } from "react";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
+
   return (
     <Gemini>
       <main className="flex min-h-screen w-full flex-col lg:flex-row">

@@ -6,7 +6,6 @@ declare type UserType = {
   _id: string;
   clerkID: string;
   email: string;
-  username: string;
   firstName: string | null;
   lastName: string | null;
 };

@@ -10,12 +10,14 @@ export default async function AppHome({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { userId } = await auth();
-  const { guest } = await searchParams;
+  const { guest, userID } = await searchParams;
 
   if (!userId) {
     if (guest) {
-      const userID = generateRandomID();
-      const chat = await createChat(userID, true);
+      const chat = await createChat(
+        typeof userID === "string" ? userID : "",
+        true
+      );
       redirect(`/app/${chat._id}?guest=true`);
     } else {
       redirect("/");
