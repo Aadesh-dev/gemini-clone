@@ -3,6 +3,7 @@
 import { ChatInfo } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
 import { ChatInfoContext } from "@/lib/contexts";
+import { generateRandomID } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -40,16 +41,17 @@ const Sidebar = () => {
   } px-3 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
 
   const newChat = () => {
-    if(guest) {
-      router.push("/app?guest=true");
+    if (guest) {
+      const userID = generateRandomID();
+      router.push(`/app?guest=true&userID=${userID}`);
     } else {
       router.push("/app/");
     }
   };
 
   useEffect(() => {
-    if(isSignedIn) {
-      getChatsByClerkID(userId).then(chats => {
+    if (isSignedIn) {
+      getChatsByClerkID(userId).then((chats) => {
         setChats(chats);
       });
     }
@@ -108,7 +110,9 @@ const Sidebar = () => {
             <div key={index} className="text-[#575B5F] text-[14px]">
               <div className="relative">
                 <button
-                  onClick={() => router.push(`/app/${chat._id}`)}
+                  onClick={() =>
+                    router.push(`/app/${chat._id}${guest ? "?guest=true" : ""}`)
+                  }
                   className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left cursor-pointer"
                 >
                   <div className="flex items-center w-6 h-6">

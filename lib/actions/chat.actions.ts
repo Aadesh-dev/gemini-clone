@@ -16,7 +16,7 @@ const populateUser = (query: any) =>
     select: "_id clerkID firstName",
   });
 
-//Create
+//CREATE
 export const createChat = async (
   userID: string,
   guest: boolean
@@ -102,7 +102,7 @@ export async function getChatsByClerkID(userID: string): Promise<ChatType[]> {
   return JSON.parse(JSON.stringify(chats));
 }
 
-//Update
+//UPDATE
 export const updateChatByID = async ({
   chatID,
   messages,
@@ -130,3 +130,14 @@ export const updateChatByID = async ({
   }
   return JSON.parse(JSON.stringify(updatedChat));
 };
+
+// DELETE
+export async function deleteChatsByUserID(userID: string) {
+  try {
+    await connectToDatabase();
+
+    await Chat.deleteMany({user: userID});
+  } catch (error) {
+    handleError(error);
+  }
+}

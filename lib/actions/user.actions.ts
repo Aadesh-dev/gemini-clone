@@ -10,7 +10,6 @@ import { revalidatePath } from "next/cache";
 export async function createUser(user: {
   clerkID: string;
   email: string;
-  username: string;
   firstName: string | null;
   lastName: string | null;
 }): Promise<UserType> {
@@ -45,7 +44,6 @@ export async function updateUser(
   user: {
     firstName: string | null;
     lastName: string | null;
-    username: string;
   }
 ): Promise<UserType> {
   let updatedUser;

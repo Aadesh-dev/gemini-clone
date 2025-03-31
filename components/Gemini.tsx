@@ -1,41 +1,65 @@
 "use client";
 
 import { ChatInfo } from "@/app/types";
+import { deleteChatsByUserID } from "@/lib/actions/chat.actions";
 import { ChatInfoContext, UserContext } from "@/lib/contexts";
-import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+
+const useWindowUnloadEffect = (handler: () => void, callOnCleanup: boolean) => {
+  const cb = useRef(() => {});
+
+  cb.current = handler;
+
+  useEffect(() => {
+    const handler = () => cb.current();
+
+    window.addEventListener("beforeunload", handler);
+
+    return () => {
+      if (callOnCleanup) handler();
+
+      window.removeEventListener("beforeunload", handler);
+    };
+  }, [callOnCleanup]);
+};
 
 const Gemini = ({ children }: { children: React.ReactNode }) => {
-  //const [user, setUser] = useState<UserType | null>(null);
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
-  // const { userId, isSignedIn } = useAuth();
-  // const searchParams = useSearchParams();
-  // const router = useRouter();
+  const searchParams = useSearchParams();
+  const userID = searchParams.get("userID");
+
+  useEffect(() => {
+    return () => {
+      if (userID) {
+        deleteChatsByUserID(userID);
+      }
+    };
+  }, []);
+
+  // useWindowUnloadEffect(() => {
+  //   if (userID) {
+  //     alert(userID);
+  //     deleteChatsByUserID(userID);
+  //   }
+  // }, true);
 
   // useEffect(() => {
-  //   if (!isSignedIn) {
-  //     if (searchParams.get("guest")) {
-  //       const userID = generateRandomID();
-  //       setUser({
-  //         clerkID: userID,
-  //         email: "",
-  //         username: "",
-  //         firstName: "Guest",
-  //         lastName: "Guest",
-  //       });
-  //       createChat(userID, true).then((chat) => {
-  //         router.push(`/app/${chat._id}?guest=true`);
-  //       });
-  //     } else {
-  //       router.push("/");
-  //     }
-  //   } else {
-  //     getUserByClerkID(userId).then((user) => {
-  //       createChat(user._id, true).then((chat) => {
-  //         router.push(`/app/${chat._id}`);
-  //       });
-  //     });
+  //   if (!userID) return;
+
+  //   const handleUnload = () => {
+  //     deleteChatsByUserID(userID);
+  //   };
+
+  //   // Call on page unload/reload
+  //   window.addEventListener("beforeunload", handleUnload);
+
+  //   // Call on component unmount
+  //   return () => {
+  //     handleUnload();
+  //     window.removeEventListener("beforeunload", handleUnload);
   //   }
-  // }, []);
+  // }, [userID]);
 
   return (
     //<UserContext.Provider value={user}>
