@@ -19,10 +19,7 @@ export async function POST(req: Request) {
       });
       updateChatByID({
         chatID: id,
-        messages: appendResponseMessages({
-          messages,
-          responseMessages: response.messages,
-        }),
+        messages: mergedMessages,
         title,
         guest
       });

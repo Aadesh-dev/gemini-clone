@@ -11,7 +11,7 @@ import { handleError } from "../utils";
 
 const populateUser = (query: any) =>
   query.populate({
-    path: "author",
+    path: "user",
     model: User,
     select: "_id clerkID firstName",
   });
@@ -95,7 +95,7 @@ export async function getChatsByClerkID(userID: string): Promise<ChatType[]> {
   try {
     await connectToDatabase();
 
-    chats = await Chat.find({ clerkID: userID });
+    chats = await Chat.find({ "user.clerkID": userID });
   } catch (error) {
     handleError(error);
   }
@@ -107,7 +107,7 @@ export const updateChatByID = async ({
   chatID,
   messages,
   title,
-  guest
+  guest,
 }: {
   chatID: string;
   messages: Message[];
@@ -136,7 +136,7 @@ export async function deleteChatsByUserID(userID: string) {
   try {
     await connectToDatabase();
 
-    await Chat.deleteMany({user: userID});
+    await Chat.deleteMany({ user: userID });
   } catch (error) {
     handleError(error);
   }

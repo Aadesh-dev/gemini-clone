@@ -4,11 +4,10 @@ import { ChatInfo } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
 import { ChatInfoContext } from "@/lib/contexts";
 import { generateRandomID } from "@/lib/utils";
-import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ userId }: { userId: string | null }) => {
   //State
   const [expanded, setExpanded] = useState(true);
   const [chats, setChats] = useState<ChatInfo[]>([]);
@@ -18,7 +17,6 @@ const Sidebar = () => {
 
   //Other
   const router = useRouter();
-  const { userId, isSignedIn } = useAuth();
   const searchParams = useSearchParams();
   const guest = searchParams.get("guest") ? true : false;
 
@@ -50,7 +48,7 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (userId) {
       getChatsByClerkID(userId).then((chats) => {
         setChats(chats);
       });

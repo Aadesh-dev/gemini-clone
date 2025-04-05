@@ -71,15 +71,16 @@ const Input = ({
   const onPromptSubmit = async (event?: {
     preventDefault?: () => void;
   }): Promise<void> => {
+    let newTitle = title;
     if (title === "New Chat") {
-      const newTitle = await getChatTitle(input);
+      newTitle = await getChatTitle(input);
       setChatInfo({ _id: chatID, title: newTitle });
       setTitle(newTitle);
     }
 
     handleSubmit(event, {
       body: {
-        title,
+        title: newTitle.trim(),
         guest
       },
     });

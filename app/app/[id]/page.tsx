@@ -17,7 +17,6 @@ const Page = async ({
     redirect("/");
   }
   const { id } = await params;
-  //const chat = await getChatByID(id);
   const chat = await getChatByID(id, guest ? true : false);
   const initialMessages = chat.messages;
   
