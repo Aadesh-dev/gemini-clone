@@ -27,6 +27,8 @@ declare type ChatType = {
 declare type ChatInfo = {
   _id: string;
   title: string;
+  newChat?: boolean;
+  fromExistingChat?: boolean;
 };
 
 declare type ChatInfoContextType = {

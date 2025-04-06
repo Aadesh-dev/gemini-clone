@@ -6,7 +6,7 @@ import { streamText, appendResponseMessages } from "ai";
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages, id, title, guest } = await req.json();
+  const { messages, id, title, userId } = await req.json();
 
   const result = streamText({
     model: google("gemini-2.0-flash"),
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         chatID: id,
         messages: mergedMessages,
         title,
-        guest
+        guest: userId ? false : true,
       });
     },
   });

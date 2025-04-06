@@ -1,29 +1,35 @@
-import Sidebar from "@/components/Sidebar";
 import Gemini from "@/components/Gemini";
 import ModelsDialog from "@/components/ModelsDialog";
-import { Suspense } from "react";
-import { auth } from "@clerk/nextjs/server";
+import Sidebar from "@/components/Sidebar";
 import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import { ReactNode } from "react";
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: ReactNode }) => {
   const { userId } = await auth();
+
   return (
-    <Suspense>
-      <Gemini>
-        <main className="flex min-h-screen w-full flex-col lg:flex-row">
-          <Sidebar userId={userId} />
-          <div className="flex flex-col flex-1">
-            <div className="flex justify-between items-center">
-              <div className="mt-3 mb-[10px] ml-[10px]">
-                <ModelsDialog />
-              </div>
-              <UserButton />
+    <Gemini>
+      <main className="flex min-h-screen w-full flex-col lg:flex-row">
+        <Sidebar userId={userId} />
+        <div className="flex flex-col flex-1">
+          <div className="flex justify-between items-center">
+            <div className="mt-3 mb-[10px] ml-[10px]">
+              <ModelsDialog />
             </div>
-            {children}
+            {userId ? (
+              <UserButton />
+            ) : (
+              <button className="button bg-purple-gradient bg-cover">
+                <Link href="/sign-in">Sign in</Link>
+              </button>
+            )}
           </div>
-        </main>
-      </Gemini>
-    </Suspense>
+          {children}
+        </div>
+      </main>
+    </Gemini>
   );
 };
 

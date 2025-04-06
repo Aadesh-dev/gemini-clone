@@ -3,7 +3,6 @@
 import { ChatInfo } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
 import { ChatInfoContext } from "@/lib/contexts";
-import { generateRandomID } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
@@ -18,33 +17,34 @@ const Sidebar = ({ userId }: { userId: string | null }) => {
   //Other
   const router = useRouter();
   const searchParams = useSearchParams();
-  const guest = searchParams.get("guest") ? true : false;
 
   if (!context) {
     throw new Error("Chat must be used within a ChatInfoContext.Provider");
   }
 
-  const { chatInfo } = context;
+  const { chatInfo, setChatInfo } = context;
 
-  const newChatButtonClass = `rounded-[20px] mx-2 px-2 bg-[#dde3ea] hover:bg-[rgba(100,149,237,0.2)] flex items-center font-medium h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer ${
+  const newChatButtonClass = `rounded-[20px] mx-2 px-2 bg-[#dde3ea] disabled:bg-[rgba(211,219,229,0.38)] hover:bg-[rgba(100,149,237,0.2)] flex items-center font-medium h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
     expanded ? "w-auto" : "w-10 rounded-full"
   }`;
 
-  const newChatTextClass = `ml-4 mr-2 my-2 text-[14px] text-[#444746] transition-opacity duration-300 ease-in-out ${
+  const newChatTextClass = `ml-4 mr-2 my-2 text-[14px] ${
+    chatInfo && !chatInfo.newChat
+      ? "text-[#444746]"
+      : "text-[rgba(27,28,29,0.38)]"
+  } transition-opacity duration-300 ease-in-out ${
     expanded ? "opacity-100 block" : "opacity-0 hidden"
   }`;
 
   const chatContainerClass = `${
     expanded ? "visible opacity-100" : "invisible opacity-0"
-  } px-3 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
+  } px-4 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
 
   const newChat = () => {
-    if (guest) {
-      const userID = generateRandomID();
-      router.push(`/app?guest=true&userID=${userID}`);
-    } else {
-      router.push("/app/");
+    if (chatInfo) {
+      setChatInfo({ ...chatInfo, newChat: true });
     }
+    router.push("/app/");
   };
 
   useEffect(() => {
@@ -52,11 +52,16 @@ const Sidebar = ({ userId }: { userId: string | null }) => {
       getChatsByClerkID(userId).then((chats) => {
         setChats(chats);
       });
+    } else {
+      if (chatInfo) {
+        setChatInfo({ ...chatInfo, newChat: true });
+      }
+      setChats([]);
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
-    if (chatInfo) {
+    if (chatInfo && !chatInfo.newChat && !chatInfo.fromExistingChat) {
       setChats((chats) => [chatInfo, ...chats]);
     }
   }, [chatInfo]);
@@ -87,13 +92,21 @@ const Sidebar = ({ userId }: { userId: string | null }) => {
       </div>
       <div className="mt-[44px]">
         <div className="pl-2 pb-4">
-          <button onClick={newChat} className={newChatButtonClass}>
+          <button
+            onClick={newChat}
+            className={newChatButtonClass}
+            disabled={!chatInfo || chatInfo.newChat}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
               viewBox="0 -960 960 960"
               width="24px"
-              fill="#444746"
+              fill={
+                chatInfo && !chatInfo.newChat
+                  ? "#444746"
+                  : "rgba(27,28,29,0.38)"
+              }
             >
               <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
             </svg>
@@ -104,13 +117,41 @@ const Sidebar = ({ userId }: { userId: string | null }) => {
           <div className="pl-3 py-2">
             <h1 className="text text-[14px] font-medium">Recent</h1>
           </div>
+          {!userId && (
+            <div className="max-w-sm py-4 px-6 rounded-2xl bg-[#dde3ea] text-[#1b1c1d]">
+              <p className="text-sm font-medium mb-1">
+                Sign in to start saving your chats
+              </p>
+              <p className="text-sm mb-4">
+                The chats that you see here are temporary, and will not be saved
+                unless you sign in.
+              </p>
+              <button className="bg-[#0b57d0] hover:bg-blue-700 text-white text-sm font-medium px-6 py-[10px] rounded-full">
+                Sign in
+              </button>
+            </div>
+          )}
           {chats.map((chat, index) => (
             <div key={index} className="text-[#575B5F] text-[14px]">
               <div className="relative">
                 <button
-                  onClick={() =>
-                    router.push(`/app/${chat._id}${guest ? "?guest=true" : ""}`)
-                  }
+                  onClick={() => {
+                    if (chatInfo) {
+                      setChatInfo({
+                        ...chatInfo,
+                        newChat: false,
+                        fromExistingChat: true,
+                      });
+                    } else {
+                      setChatInfo({
+                        _id: chat._id,
+                        title: chat.title,
+                        newChat: false,
+                        fromExistingChat: true,
+                      });
+                    }
+                    router.push(`/app/${chat._id}`);
+                  }}
                   className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left cursor-pointer"
                 >
                   <div className="flex items-center w-6 h-6">

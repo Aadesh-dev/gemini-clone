@@ -24,18 +24,12 @@ const useWindowUnloadEffect = (handler: () => void, callOnCleanup: boolean) => {
   }, [callOnCleanup]);
 };
 
-const Gemini = ({ children }: { children: React.ReactNode }) => {
+const Gemini = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
-  const searchParams = useSearchParams();
-  const userID = searchParams.get("userID");
-
-  useEffect(() => {
-    return () => {
-      if (userID) {
-        deleteChatsByUserID(userID);
-      }
-    };
-  }, []);
 
   // useWindowUnloadEffect(() => {
   //   if (userID) {

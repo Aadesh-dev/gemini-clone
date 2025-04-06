@@ -12,16 +12,16 @@ import React, {
 
 const Input = ({
   chatID,
+  userId,
   input,
   chat,
-  guest,
   handleInputChange,
   handleSubmit,
 }: {
   chatID: string;
+  userId: string | null;
   input: string;
   chat: ChatType;
-  guest: boolean;
   handleInputChange: (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -81,7 +81,7 @@ const Input = ({
     handleSubmit(event, {
       body: {
         title: newTitle.trim(),
-        guest
+        userId,
       },
     });
   };

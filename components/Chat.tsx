@@ -3,27 +3,26 @@
 import { ChatType } from "@/app/types";
 import { Message, useChat } from "@ai-sdk/react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import Input from "./Input";
 
 const Chat = ({
   chatID,
-  initialMessages,
+  userId,
   chat,
+  initialMessages,
 }: {
   chatID: string;
-  initialMessages?: Message[];
+  userId: string | null;
   chat: ChatType;
+  initialMessages?: Message[];
 }) => {
   const { input, handleInputChange, handleSubmit, messages } = useChat({
     id: chatID, // use the provided chat ID
     initialMessages, // initial messages if provided
     sendExtraMessageFields: true, // send id and createdAt for each message
   });
-  const searchParams = useSearchParams();
-  const guest = searchParams.get("guest") ? true : false;
 
   return (
     <div className="flex flex-col justify-between items-center w-[-webkit-fill-available]">
@@ -90,16 +89,16 @@ const Chat = ({
       ) : (
         <div className="grid place-items-center w-full relative top-[66px] h-[calc(100vh-184px)]">
           <p className="text-transparent pointer-events-none bg-[length:400%_100%] bg-clip-text [-webkit-text-fill-color:transparent] text-[32px] leading-10 font-medium bg-[linear-gradient(74deg,_#4285f4_0%,_#9b72cb_9%,_#d96570_20%,_#d96570_24%,_#9b72cb_35%,_#4285f4_44%,_#9b72cb_50%,_#d96570_56%,_#ffffff_75%,_#ffffff_100%)]">
-            Hello, {guest ? "Guest" : !(typeof(chat.user) === "string") ? chat.user.firstName : ""}
+            Hello, {!userId ? "Guest" : !(typeof(chat.user) === "string") ? chat.user.firstName : ""}
           </p>
         </div>
       )}
       <div className="flex flex-col items-center w-[-webkit-fill-available] fixed bottom-0 bg-white">
         <Input
           chatID={chatID}
+          userId={userId}
           input={input}
           chat={chat}
-          guest={guest}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
         />
