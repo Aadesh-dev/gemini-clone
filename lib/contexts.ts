@@ -1,10 +1,16 @@
 "use client";
 
-import { ChatInfoContextType, ChatType, UserType } from "@/app/types";
+import {
+  ChatInfoContextType,
+  ChatsContextType,
+  ModelContextType,
+  UserContextType,
+} from "@/app/types";
 import { createContext } from "react";
 
-const UserContext = createContext<UserType | null>(null);
-const ChatContext = createContext<[ChatType] | []>([]);
+const UserContext = createContext<UserContextType | null>(null);
+const ChatsContext = createContext<ChatsContextType | null>(null);
+const ModelContext = createContext<ModelContextType | null>(null);
 const ChatInfoContext = createContext<ChatInfoContextType | null>(null);
 
-export { ChatContext, ChatInfoContext, UserContext };
+export { ChatInfoContext, ChatsContext, UserContext, ModelContext };

@@ -44,14 +44,19 @@ export async function updateUser(
   user: {
     firstName: string | null;
     lastName: string | null;
-  }
+    sidebarExpanded?: boolean;
+  },
 ): Promise<UserType> {
   let updatedUser;
 
   try {
     await connectToDatabase();
 
-    updatedUser = await User.findOneAndUpdate({ clerkID }, user);
+    const existingUser = await getUserByClerkID(clerkID);
+    updatedUser = await User.findOneAndUpdate(
+      { clerkID },
+      { ...existingUser, ...user },
+    );
 
     if (!updatedUser) throw new Error("User update failed");
   } catch (error) {

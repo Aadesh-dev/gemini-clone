@@ -1,30 +1,21 @@
 import { createChat } from "@/lib/actions/chat.actions";
 import { getUserByClerkID } from "@/lib/actions/user.actions";
-import { generateRandomID } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { ChatType } from "../types";
+import { generateRandomID } from "@/lib/utils";
 
-export default async function AppHome({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default async function AppHome() {
   const { userId } = await auth();
-  const { guest, userID } = await searchParams;
+  let chat: ChatType;
 
   if (!userId) {
-    if (guest) {
-      const chat = await createChat(
-        typeof userID === "string" ? userID : "",
-        true
-      );
-      redirect(`/app/${chat._id}?guest=true`);
-    } else {
-      redirect("/");
-    }
+    const guestUserID = generateRandomID();
+    chat = await createChat(guestUserID, true);
   } else {
     const user = await getUserByClerkID(userId);
-    const chat = await createChat(user._id, false);
-    redirect(`/app/${chat._id}`);
+    chat = await createChat(user._id, false);
   }
+
+  redirect(`/app/${chat._id}`);
 }

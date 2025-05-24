@@ -17,6 +17,10 @@ const UserSchema = new Schema({
   lastName: {
     type: String,
   },
+  sidebarExpanded: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const User = models.User || model("User", UserSchema);

@@ -1,113 +1,240 @@
 "use client";
 
-import { ChatType } from "@/app/types";
+import { ChatType, UserType } from "@/app/types";
+import { getChatsByClerkID } from "@/lib/actions/chat.actions";
+import { ChatsContext, ModelContext, UserContext } from "@/lib/contexts";
 import { Message, useChat } from "@ai-sdk/react";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import Input from "./Input";
+import GeminiStarIcon from "./icons/GeminiStarIcon";
+import { SignedOut } from "@clerk/nextjs";
+import remarkGfm from "remark-gfm";
+import { fixBrokenMarkdownTables } from "@/lib/utils";
+import LoadingStarIcon from "./LoadingStarIcon";
+
+function StrongTag({ children }: React.PropsWithChildren) {
+  return <strong className="font-medium">{children}</strong>;
+}
 
 const Chat = ({
   chatID,
-  initialMessages,
+  userId,
   chat,
+  initialMessages,
 }: {
   chatID: string;
-  initialMessages?: Message[];
+  userId: string | null;
   chat: ChatType;
+  initialMessages?: Message[];
 }) => {
-  const { input, handleInputChange, handleSubmit, messages } = useChat({
-    id: chatID, // use the provided chat ID
-    initialMessages, // initial messages if provided
-    sendExtraMessageFields: true, // send id and createdAt for each message
-  });
-  const searchParams = useSearchParams();
-  const guest = searchParams.get("guest") ? true : false;
+  //State
+  const [height, setHeight] = useState(24);
+
+  //Other
+  const { input, handleInputChange, handleSubmit, messages, status, stop } =
+    useChat({
+      id: chatID, // use the provided chat ID
+      initialMessages, // initial messages if provided
+      sendExtraMessageFields: true, // send id and createdAt for each message
+    });
+
+  //Context
+  const chatsContext = useContext(ChatsContext);
+  const userContext = useContext(UserContext);
+
+  if (!chatsContext) {
+    throw new Error("Chat must be used within a ChatsContext.Provider");
+  }
+
+  if (!userContext) {
+    throw new Error("Chat must be used within a UserContext.Provider");
+  }
+
+  const { chats, setChats } = chatsContext;
+  const { user } = userContext;
+
+  useEffect(() => {
+    const newChat: ChatType = {
+      _id: chat._id,
+      title: chat.title,
+      messages,
+      user: chat.user,
+    };
+    if (!chats.length) {
+      if (userId) {
+        getChatsByClerkID(userId).then((chats) => {
+          if (newChat.messages.length) {
+            setChats(chats.reverse());
+          } else {
+            setChats([newChat, ...chats.reverse()]);
+          }
+        });
+      } else {
+        setChats([newChat]);
+      }
+    } else if (!chats.find((c) => c._id === chatID)) {
+      setChats([newChat, ...chats]);
+    }
+  }, []);
 
   return (
-    <div className="flex flex-col justify-between items-center w-[-webkit-fill-available]">
+    <div className="flex flex-col items-center justify-between">
       {messages.length ? (
-        <div className="w-full relative top-[66px] h-[calc(100vh-184px)] overflow-y-auto">
-          <div className="max-w-[724px] w-full mx-auto">
+        <div
+          className="w-full overflow-y-auto pt-4 pr-4 pb-5 pl-7"
+          style={{
+            height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
+          }}
+        >
+          <div className="mx-auto w-[760px] leading-7 text-[#1b1c1d]">
             {messages.map((m, index: number) => (
               <React.Fragment key={index}>
                 {m.role === "user" ? (
-                  <div className="flex py-2 mb-12">
-                    <div className="mr-[20px]">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 28 28"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M14 28C14 26.0633 13.6267 24.2433 12.88 22.54C12.1567 20.8367 11.165 19.355 9.905 18.095C8.645 16.835 7.16333 15.8433 5.46 15.12C3.75667 14.3733 1.93667 14 0 14C1.93667 14 3.75667 13.6383 5.46 12.915C7.16333 12.1683 8.645 11.165 9.905 9.905C11.165 8.645 12.1567 7.16333 12.88 5.46C13.6267 3.75667 14 1.93667 14 0C14 1.93667 14.3617 3.75667 15.085 5.46C15.8317 7.16333 16.835 8.645 18.095 9.905C19.355 11.165 20.8367 12.1683 22.54 12.915C24.2433 13.6383 26.0633 14 28 14C26.0633 14 24.2433 14.3733 22.54 15.12C20.8367 15.8433 19.355 16.835 18.095 18.095C16.835 19.355 15.8317 20.8367 15.085 22.54C14.3617 24.2433 14 26.0633 14 28Z"
-                          fill="url(#paint0_radial_16771_53212)"
-                        />
-                        <defs>
-                          <radialGradient
-                            id="paint0_radial_16771_53212"
-                            cx="0"
-                            cy="0"
-                            r="1"
-                            gradientUnits="userSpaceOnUse"
-                            gradientTransform="translate(2.77876 11.3795) rotate(18.6832) scale(29.8025 238.737)"
-                          >
-                            <stop offset="0.0671246" stopColor="#9168C0" />
-                            <stop offset="0.342551" stopColor="#5684D1" />
-                            <stop offset="0.672076" stopColor="#1BA1E3" />
-                          </radialGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div className="prose">
-                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                  <div className="flex justify-end py-2">
+                    <div className="pb-6">
+                      <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[#e9eef6] px-4 py-3">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            strong: StrongTag,
+                            table: ({ children }) => (
+                              <div className="overflow-auto rounded-xl border border-gray-200">
+                                <table className="min-w-full table-auto border-collapse text-left text-sm text-gray-800">
+                                  {children}
+                                </table>
+                              </div>
+                            ),
+                            thead: ({ children }) => (
+                              <thead className="bg-gray-100 font-semibold text-gray-900">
+                                {children}
+                              </thead>
+                            ),
+                            th: ({ children }) => (
+                              <th className="border-b px-4 py-2">{children}</th>
+                            ),
+                            td: ({ children }) => (
+                              <td className="border-b px-4 py-2">{children}</td>
+                            ),
+                          }}
+                        >
+                          {fixBrokenMarkdownTables(m.content)}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex py-2 mb-8">
-                    <div className="mr-[20px]">
-                      <Image
-                        src="/profile-user.png"
-                        alt="Example"
-                        width={32}
-                        height={32}
-                      />
-                    </div>
-                    <div>
-                      <div className="prose">
-                        <ReactMarkdown>{m.content}</ReactMarkdown>
+                  <div className="mb-9 flex">
+                    {index === messages.length - 1 && status === "streaming" ? (
+                      <LoadingStarIcon />
+                    ) : (
+                      <div className={"mr-[20px]"}>
+                        <GeminiStarIcon width={32} height={32} />
                       </div>
+                    )}
+                    <div className="prose pt-1">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          strong: StrongTag,
+                          table: ({ children }) => (
+                            <table className="my-4 overflow-hidden rounded-2xl text-left text-sm leading-5">
+                              {children}
+                            </table>
+                          ),
+                          th: ({ children }) => (
+                            <th className="bg-[#e9eef6] px-3 py-2 font-medium">
+                              {children}
+                            </th>
+                          ),
+                          td: ({ children }) => (
+                            <td className="bg-[#f8fafd] px-3 py-2">
+                              {children}
+                            </td>
+                          ),
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 )}
               </React.Fragment>
             ))}
+            {status === "submitted" && (
+              <div className="mb-9 flex">
+                <LoadingStarIcon />
+                <p>Just a sec...</p>
+              </div>
+            )}
           </div>
         </div>
       ) : (
-        <div className="grid place-items-center w-full relative top-[66px] h-[calc(100vh-184px)]">
-          <p className="text-transparent select-none bg-[length:400%_100%] bg-clip-text [-webkit-text-fill-color:transparent] text-[32px] leading-10 font-medium bg-[linear-gradient(74deg,_#4285f4_0%,_#9b72cb_9%,_#d96570_20%,_#d96570_24%,_#9b72cb_35%,_#4285f4_44%,_#9b72cb_50%,_#d96570_56%,_#ffffff_75%,_#ffffff_100%)]">
-            Hello, {guest ? "Guest" : !(typeof(chat.user) === "string") ? chat.user.firstName : ""}
-          </p>
+        <div
+          className="grid w-full place-items-center overflow-y-auto pt-4 pr-4 pb-[6px] pl-7"
+          style={{
+            height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
+          }}
+        >
+          {userId && (
+            <h1 className="pointer-events-none mx-auto text-center text-[32px] leading-10 font-medium">
+              <span className="bg-[linear-gradient(74deg,_rgb(66,133,244)_0px,_rgb(155,114,203)_9%,_rgb(217,101,112)_20%,_rgb(217,101,112)_24%,_rgb(155,114,203)_35%,_rgb(66,133,244)_44%,_rgb(155,114,203)_50%,_rgb(217,101,112)_56%,_rgb(255,255,255)_75%,_rgb(255,255,255)_100%)] bg-[length:400%_100%] bg-clip-text text-transparent">
+                Hello, {user?.firstName}
+              </span>
+            </h1>
+          )}
+          <SignedOut>
+            <h1 className="pointer-events-none mx-auto w-[725px] text-center text-[45px] leading-13 font-medium">
+              <span>Meet&nbsp;</span>
+              <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
+                Gemini
+              </span>
+              <span>,</span>
+              <br />
+              <span>your personal AI assistant</span>
+            </h1>
+          </SignedOut>
         </div>
       )}
-      <div className="flex flex-col items-center w-[-webkit-fill-available] fixed bottom-0 bg-white">
-        <Input
-          chatID={chatID}
-          input={input}
-          chat={chat}
-          guest={guest}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-        />
-        <p className="my-4 text-xs text-[#444746] leading-4 h-4">
-          {messages.length
-            ? "Gemini can make mistakes, so double-check it"
-            : ""}
-        </p>
+      <div className="absolute bottom-0 w-full">
+        <div className="relative flex w-full justify-center bg-white before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,100)_60%)] before:content-['']">
+          <div className="z-[1] w-[760px]">
+            <Input
+              chatID={chatID}
+              userId={userId}
+              input={input}
+              chat={chat}
+              handleInputChange={handleInputChange}
+              handleSubmit={handleSubmit}
+              height={height}
+              setHeight={setHeight}
+              status={status}
+              stop={stop}
+            />
+            <p className="my-4 h-4 text-center text-xs leading-4 text-[#575b5f]">
+              {messages.length ? (
+                "Gemini can make mistakes, so double-check it"
+              ) : (
+                <SignedOut>
+                  <a
+                    className="underline"
+                    href="https://policies.google.com/terms"
+                  >
+                    Google Terms
+                  </a>{" "}
+                  and the{" "}
+                  <a
+                    className="underline"
+                    href="https://policies.google.com/privacy"
+                  >
+                    Google Privacy Policy
+                  </a>{" "}
+                  apply. Gemini can make mistakes, so double-check it.
+                </SignedOut>
+              )}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

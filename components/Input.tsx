@@ -2,61 +2,70 @@
 
 import { ChatType } from "@/app/types";
 import { getChatTitle } from "@/lib/actions/chat.actions";
-import { ChatInfoContext } from "@/lib/contexts";
+import { ChatsContext, ModelContext } from "@/lib/contexts";
 import { ChatRequestOptions } from "ai";
-import React, {
-  useContext,
-  useRef,
-  useState
-} from "react";
+import React, { useContext, useRef, useState } from "react";
+import SendIcon from "./icons/SendIcon";
+import StopIcon from "./icons/StopIcon";
 
 const Input = ({
   chatID,
+  userId,
   input,
   chat,
-  guest,
   handleInputChange,
   handleSubmit,
+  height,
+  setHeight,
+  status,
+  stop,
 }: {
   chatID: string;
+  userId: string | null;
   input: string;
   chat: ChatType;
-  guest: boolean;
   handleInputChange: (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.ChangeEvent<HTMLTextAreaElement>,
   ) => void;
   handleSubmit: (
     event?: {
       preventDefault?: () => void;
     },
-    chatRequestOptions?: ChatRequestOptions
+    chatRequestOptions?: ChatRequestOptions,
   ) => void;
+  height: number;
+  setHeight: React.Dispatch<React.SetStateAction<number>>;
+  status: string;
+  stop: () => void;
 }) => {
   //State
-  const [inputFocused, setInputFocused] = useState(false);
   const [title, setTitle] = useState(chat.title);
-  const [height, setHeight] = useState(24);
 
-  //Context
-  const context = useContext(ChatInfoContext);
+  //chatsContext
+  const chatsContext = useContext(ChatsContext);
+  const modelContext = useContext(ModelContext);
 
   //Other
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  if (!context) {
-    throw new Error("Chat must be used within a ChatInfoContext.Provider");
+  if (!chatsContext) {
+    throw new Error("Chat must be used within a ChatsContext.Provider");
   }
 
-  const { setChatInfo } = context;
+  if (!modelContext) {
+    throw new Error("Chat must be used within a ModelContext.Provider");
+  }
+
+  const { chats, setChats } = chatsContext;
+  const { model } = modelContext;
 
   const onPromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    //setPrompt(e.target.value);
     handleInputChange(e);
     const textarea = textareaRef.current;
     if (textarea) {
-      // Reset height to measure the content height accurately
+      // Reset heights to measure the content height accurately
       textarea.style.height = "auto";
 
       // Calculate new height based on scrollHeight
@@ -71,16 +80,36 @@ const Input = ({
   const onPromptSubmit = async (event?: {
     preventDefault?: () => void;
   }): Promise<void> => {
+    if (event?.preventDefault) event?.preventDefault();
+    if (input.trim() === "") {
+      return; // Prevent submission if input is empty
+    }
+    let newTitle = title;
     if (title === "New Chat") {
-      const newTitle = await getChatTitle(input);
-      setChatInfo({ _id: chatID, title: newTitle });
+      newTitle = await getChatTitle(input, model);
       setTitle(newTitle);
+
+      const chatIndex = chats.findIndex((c) => c._id === chatID);
+      const currentChat = structuredClone(chats[chatIndex]);
+      currentChat.title = newTitle;
+      currentChat.messages.push({
+        id: "id",
+        content: "content",
+        role: "user",
+      });
+      const newChats = [
+        ...chats.slice(0, chatIndex),
+        currentChat,
+        ...chats.slice(chatIndex + 1),
+      ];
+      setChats(newChats);
     }
 
     handleSubmit(event, {
       body: {
-        title,
-        guest
+        title: newTitle.trim(),
+        userId,
+        model,
       },
     });
   };
@@ -93,47 +122,43 @@ const Input = ({
   };
 
   return (
-    <form
-      className={`flex items-center w-full max-w-[830px] sticky bottom-0 ${
-        inputFocused
-          ? "bg-[var(--text-focused-background)]"
-          : "bg-[var(--text-background)]"
-      } py-[4px] pl-[26px] pr-[12px]`}
-      onSubmit={onPromptSubmit}
-      style={{ borderRadius: height <= 24 ? 32 : 16 }}
+    <div
+      className="max-h-[204px] w-full border border-solid border-[#c4c7c5] transition-[border-radius,height] duration-[100ms,250ms] ease-[cubic-bezier(.2,0,0,1),cubic-bezier(.2,0,0,1)]"
+      style={{ borderRadius: height <= 24 ? 32 : 16, height: 36 + height }}
     >
-      <textarea
-        value={input}
-        ref={textareaRef}
-        rows={1}
-        placeholder="Ask Gemini"
-        className={
-          "flex-1 outline-none bg-transparent resize-none overflow-hidden placeholder-[var(--form-field-placeholder)] my-[16px]"
-        }
-        onChange={onPromptChange}
-        onFocus={() => setInputFocused(true)}
-        onBlur={() => setInputFocused(false)}
-        onKeyDown={handleKeyDown}
-      />
-      <button
-        className={`ml-2 px-2 py-[8px] h-10 hover:bg-gray-200 rounded-full cursor-pointer ${
-          input
-            ? "transition-all duration-500 opacity-100 scale-100 visible pointer-events-auto"
-            : "transition-none opacity-0 scale-75 invisible pointer-events-none"
-        }`}
-        type="submit"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="#444746"
-        >
-          <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-        </svg>
-      </button>
-    </form>
+      <form className="flex p-2 pl-4" onSubmit={onPromptSubmit}>
+        <textarea
+          value={input}
+          ref={textareaRef}
+          rows={1}
+          placeholder="Ask Gemini"
+          className={
+            "my-[9px] max-h-[168px] flex-1 resize-none overflow-auto bg-transparent pr-[15px] text-[#1b1c1d] placeholder-[#5f6368] outline-none"
+          }
+          onChange={onPromptChange}
+          onKeyDown={handleKeyDown}
+        />
+        {status === "submitted" || status === "streaming" ? (
+          <button
+            className="ml-2 h-fit cursor-pointer self-end rounded-[50%] bg-[rgba(11,87,208,0.08)] p-[9px]"
+            onClick={() => stop()}
+          >
+            <StopIcon />
+          </button>
+        ) : (
+          <button
+            className={`ml-2 h-fit cursor-pointer rounded-[50%] bg-[#f0f4f9] p-[9px] hover:bg-[#dde3ea] ${
+              input
+                ? "pointer-events-auto visible scale-100 opacity-100 transition-all duration-500"
+                : "pointer-events-none invisible scale-75 opacity-0 transition-none"
+            } self-end`}
+            type="submit"
+          >
+            <SendIcon />
+          </button>
+        )}
+      </form>
+    </div>
   );
 };
 

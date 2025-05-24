@@ -8,6 +8,7 @@ declare type UserType = {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  sidebarExpanded: boolean;
 };
 
 // ====== CHAT ======
@@ -27,9 +28,25 @@ declare type ChatType = {
 declare type ChatInfo = {
   _id: string;
   title: string;
+  areMessagesInChat: boolean;
 };
 
 declare type ChatInfoContextType = {
-  chatInfo: ChatInfo?;
+  chatInfo: ChatInfo;
   setChatInfo: (chatInfo: ChatInfo) => void;
+};
+
+declare type ChatsContextType = {
+  chats: ChatType[];
+  setChats: (chats: ChatType[]) => void;
+};
+
+declare type UserContextType = {
+  user: UserType | null;
+  setUser: (user: UserType) => void;
+};
+
+declare type ModelContextType = {
+  model: string;
+  setModel: (model: string) => void;
 };
