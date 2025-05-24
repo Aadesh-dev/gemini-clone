@@ -1,30 +1,57 @@
 import Gemini from "@/components/Gemini";
 import ModelsDialog from "@/components/ModelsDialog";
 import Sidebar from "@/components/Sidebar";
-import { UserButton } from "@clerk/nextjs";
+import SignIn from "@/components/SignIn";
+import { getUserByClerkID } from "@/lib/actions/user.actions";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { ReactNode } from "react";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const { userId } = await auth();
+  let user;
+
+  if (userId) {
+    user = await getUserByClerkID(userId);
+  }
 
   return (
-    <Gemini>
-      <main className="flex min-h-screen w-full flex-col lg:flex-row">
+    <Gemini currentUser={user}>
+      <main className="flex min-h-screen flex-row">
         <Sidebar userId={userId} />
-        <div className="flex flex-col flex-1">
-          <div className="flex justify-between items-center">
-            <div className="mt-3 mb-[10px] ml-[10px]">
+        <div className="relative flex flex-1 flex-col">
+          <div className="flex items-start justify-between">
+            <div className="mt-2 ml-2">
               <ModelsDialog />
             </div>
-            {userId ? (
-              <UserButton />
-            ) : (
-              <button className="button bg-purple-gradient bg-cover">
-                <Link href="/sign-in">Sign in</Link>
-              </button>
-            )}
+            <div className="flex items-center">
+              <SignedOut>
+                <a
+                  className="mr-[22px] text-[14px] leading-5 font-medium text-[#575b5f]"
+                  href="https://gemini.google/about/"
+                  target="_blank"
+                >
+                  About Gemini
+                </a>
+              </SignedOut>
+              <div className="my-4 mr-8">
+                <SignedIn>
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: {
+                          width: 32,
+                          height: 32,
+                        },
+                      },
+                    }}
+                  />
+                </SignedIn>
+                <SignedOut>
+                  <SignIn className="inline-block rounded-full bg-[#0b57d0] px-6 py-[10px] text-center text-sm font-medium text-white hover:bg-blue-700" />
+                </SignedOut>
+              </div>
+            </div>
           </div>
           {children}
         </div>

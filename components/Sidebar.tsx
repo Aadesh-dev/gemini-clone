@@ -1,192 +1,247 @@
 "use client";
 
-import { ChatInfo } from "@/app/types";
-import { getChatsByClerkID } from "@/lib/actions/chat.actions";
-import { ChatInfoContext } from "@/lib/contexts";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { ChatsContext, UserContext } from "@/lib/contexts";
+import { SignedOut } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext, useEffect, useRef, useState } from "react";
+import DownArrowIcon from "./icons/DownArrowIcon";
+import HamburgerIcon from "./icons/HamburgerIcon";
+import NewChatIcon from "./icons/NewChatIcon";
+import OptionsIcon from "./icons/OptionsIcon";
+import SignIn from "./SignIn";
+import axios from "axios";
+import { handleError } from "@/lib/utils";
 
 const Sidebar = ({ userId }: { userId: string | null }) => {
   //State
-  const [expanded, setExpanded] = useState(true);
-  const [chats, setChats] = useState<ChatInfo[]>([]);
+  const [expanded, setExpanded] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [chatHovered, setChatHovered] = useState(-1);
+  const [showMore, setShowMore] = useState(false);
 
   //Context
-  const context = useContext(ChatInfoContext);
+  const chatsContext = useContext(ChatsContext);
+  const userContext = useContext(UserContext);
 
   //Other
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  if (!context) {
-    throw new Error("Chat must be used within a ChatInfoContext.Provider");
+  //Refs
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  if (!chatsContext) {
+    throw new Error("Sidebar must be used within a ChatsContext.Provider");
   }
 
-  const { chatInfo, setChatInfo } = context;
+  if (!userContext) {
+    throw new Error("Sidebar must be used within a UserContext.Provider");
+  }
 
-  const newChatButtonClass = `rounded-[20px] mx-2 px-2 bg-[#dde3ea] disabled:bg-[rgba(211,219,229,0.38)] hover:bg-[rgba(100,149,237,0.2)] flex items-center font-medium h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
-    expanded ? "w-auto" : "w-10 rounded-full"
+  const { chats } = chatsContext;
+  const { user, setUser } = userContext;
+
+  const id = pathname.split("/")[2];
+  const chatIndex = chats.findIndex((c) => c._id === id);
+  const currentChat = chats[chatIndex];
+  const areMessagesInChat =
+    currentChat && currentChat.messages.length ? true : false;
+
+  const newChatButtonClass = `rounded-[20px] hover:bg-[rgba(87,91,95,0.08)] flex items-center h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
+    expanded || hovered
+      ? "w-[calc(100%-24px)] mx-3"
+      : "w-10 rounded-full mx-4 justify-center px-2"
   }`;
 
-  const newChatTextClass = `ml-4 mr-2 my-2 text-[14px] ${
-    chatInfo && !chatInfo.newChat
-      ? "text-[#444746]"
-      : "text-[rgba(27,28,29,0.38)]"
+  const newChatTextClass = `my-2 text-[14px] ${
+    areMessagesInChat ? "text-[#575b5f]" : "text-[rgba(27,28,29,0.38)]"
   } transition-opacity duration-300 ease-in-out ${
-    expanded ? "opacity-100 block" : "opacity-0 hidden"
+    expanded || hovered ? "opacity-100 block" : "opacity-0 hidden"
   }`;
 
   const chatContainerClass = `${
-    expanded ? "visible opacity-100" : "invisible opacity-0"
-  } px-4 pb-2 mt-4 transition-opacity duration-1000 ease-in`;
+    expanded || hovered ? "visible opacity-100" : "invisible opacity-0"
+  } ${userId ? "px-3" : "px-4"} pb-2 mt-4 transition-opacity duration-1000 ease-in overflow-y-scroll h-[calc(100vh-140px)]`;
 
   const newChat = () => {
-    if (chatInfo) {
-      setChatInfo({ ...chatInfo, newChat: true });
-    }
     router.push("/app/");
   };
 
-  useEffect(() => {
-    if (userId) {
-      getChatsByClerkID(userId).then((chats) => {
-        setChats(chats);
-      });
-    } else {
-      if (chatInfo) {
-        setChatInfo({ ...chatInfo, newChat: true });
-      }
-      setChats([]);
+  const renderChats = (start: number, end: number) =>
+    chats
+      .filter((chat) => chat.title !== "New Chat")
+      .slice(start, end)
+      .map((chat, index) => (
+        <div
+          key={start + index}
+          className="relative text-[14px] text-[#575B5F]"
+        >
+          <button
+            onClick={() => {
+              router.push(`/app/${chat._id}`);
+            }}
+            onMouseEnter={() => {
+              setChatHovered(start + index);
+            }}
+            onMouseLeave={() => {
+              setChatHovered(-1);
+            }}
+            className={
+              currentChat && chat._id === currentChat._id
+                ? "flex w-full cursor-pointer items-center rounded-[20px] bg-[#d3e3fd] px-3 py-2 text-left font-medium text-[#0842a0]"
+                : "flex w-full cursor-pointer items-center rounded-[20px] px-3 py-2 text-left hover:bg-[rgba(87,91,95,.08)]"
+            }
+          >
+            <p className="flex-1 basis-0 overflow-hidden leading-5 overflow-ellipsis whitespace-nowrap">
+              {chat.title}
+            </p>
+            <div className="h-6 w-6"></div>
+          </button>
+          {chatHovered === start + index && (
+            <div
+              className="absolute top-[2px] right-0 z-10 flex items-center p-1"
+              onMouseEnter={() => {
+                setChatHovered(start + index);
+              }}
+              onMouseLeave={() => {
+                setChatHovered(-1);
+              }}
+            >
+              <button
+                className={
+                  currentChat && chat._id === currentChat._id
+                    ? "flex h-7 w-7 items-center justify-center rounded-full px-[6px] py-[1px] hover:bg-white"
+                    : "flex h-7 w-7 items-center justify-center rounded-full px-[6px] py-[1px] hover:bg-[#dde3ea]"
+                }
+              >
+                <OptionsIcon />
+              </button>
+            </div>
+          )}
+        </div>
+      ));
+
+  const handleHamburgerClick = async () => {
+    setExpanded(!expanded);
+    setHovered(false);
+    if (user) {
+      setUser({ ...user, sidebarExpanded: !expanded });
     }
-  }, [userId]);
+    if (userId && user) {
+      try {
+        await axios.put("/api/user", {
+          clerkID: userId,
+          user: { ...user, sidebarExpanded: !expanded },
+        });
+      } catch (error: any) {
+        handleError(error);
+      }
+    }
+  };
 
   useEffect(() => {
-    if (chatInfo && !chatInfo.newChat && !chatInfo.fromExistingChat) {
-      setChats((chats) => [chatInfo, ...chats]);
+    const isExpanded = user && user.sidebarExpanded;
+    if (userId && isExpanded !== expanded) {
+      setExpanded(user && user.sidebarExpanded ? user.sidebarExpanded : false);
     }
-  }, [chatInfo]);
+  }, [user]);
 
   return (
     <div
       className={
-        expanded
-          ? "w-[320px] bg-[#f0f4f9] shrink-0 transition-width"
-          : "w-[72px] bg-[#f0f4f9] shrink-0 transition-width"
+        expanded || hovered
+          ? "transition-width w-[272px] shrink-0 overflow-hidden bg-[#f0f4f9]"
+          : "transition-width w-[72px] shrink-0 overflow-hidden bg-[#f0f4f9]"
       }
+      onMouseEnter={() => {
+        timerRef.current = setTimeout(() => {
+          setHovered(true);
+        }, 200);
+      }}
+      onMouseLeave={() => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        setHovered(false);
+      }}
     >
-      <div className="h-12 mt-3 ml-4 flex items-center">
+      <div className="mt-4 ml-4 flex h-12 items-center">
         <button
-          onClick={() => setExpanded(!expanded)}
-          className="h-10 w-10 p-2 rounded-full hover:bg-gray-200 flex justify-center items-center cursor-pointer"
+          onClick={handleHamburgerClick}
+          onMouseEnter={() => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+          }}
+          onMouseLeave={() => {
+            if (!hovered && !expanded) {
+              timerRef.current = setTimeout(() => {
+                setHovered(true);
+              }, 200);
+            }
+          }}
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="20px"
-            viewBox="0 -960 960 960"
-            width="20px"
-            fill="#444746"
-          >
-            <path d="M144-264v-72h672v72H144Zm0-180v-72h672v72H144Zm0-180v-72h672v72H144Z" />
-          </svg>
+          <HamburgerIcon />
         </button>
       </div>
-      <div className="mt-[44px]">
-        <div className="pl-2 pb-4">
-          <button
-            onClick={newChat}
-            className={newChatButtonClass}
-            disabled={!chatInfo || chatInfo.newChat}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill={
-                chatInfo && !chatInfo.newChat
-                  ? "#444746"
-                  : "rgba(27,28,29,0.38)"
-              }
-            >
-              <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-            </svg>
-            <span className={newChatTextClass}>New chat</span>
-          </button>
-        </div>
-        <div className={chatContainerClass}>
-          <div className="pl-3 py-2">
-            <h1 className="text text-[14px] font-medium">Recent</h1>
-          </div>
-          {!userId && (
-            <div className="max-w-sm py-4 px-6 rounded-2xl bg-[#dde3ea] text-[#1b1c1d]">
-              <p className="text-sm font-medium mb-1">
-                Sign in to start saving your chats
-              </p>
-              <p className="text-sm mb-4">
-                The chats that you see here are temporary, and will not be saved
-                unless you sign in.
-              </p>
-              <button className="bg-[#0b57d0] hover:bg-blue-700 text-white text-sm font-medium px-6 py-[10px] rounded-full">
-                Sign in
-              </button>
+      <div className="mt-5">
+        <button
+          onClick={newChat}
+          className={newChatButtonClass}
+          disabled={!areMessagesInChat}
+        >
+          <span className={expanded || hovered ? "mr-4 ml-[14px]" : ""}>
+            <NewChatIcon
+              fill={areMessagesInChat ? "#575B5F" : "rgba(31, 31, 31, 0.38)"}
+            />
+          </span>
+          <span className={newChatTextClass}>New chat</span>
+        </button>
+        {(expanded || hovered) && (
+          <div className={chatContainerClass}>
+            <div className={userId ? "py-2 pl-3" : "pt-2 pb-[9px] pl-3"}>
+              <h1
+                className={
+                  userId
+                    ? "text-[14px] font-medium text-[#727676]"
+                    : "text-[14px] font-medium text-[#1b1c1d]"
+                }
+              >
+                Recent
+              </h1>
             </div>
-          )}
-          {chats.map((chat, index) => (
-            <div key={index} className="text-[#575B5F] text-[14px]">
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    if (chatInfo) {
-                      setChatInfo({
-                        ...chatInfo,
-                        newChat: false,
-                        fromExistingChat: true,
-                      });
-                    } else {
-                      setChatInfo({
-                        _id: chat._id,
-                        title: chat.title,
-                        newChat: false,
-                        fromExistingChat: true,
-                      });
-                    }
-                    router.push(`/app/${chat._id}`);
-                  }}
-                  className="flex gap-3 items-center pl-[11px] py-[6px] pr[6px] hover:bg-[rgba(87,91,95,.08)] rounded-[20px] w-full text-left cursor-pointer"
-                >
-                  <div className="flex items-center w-6 h-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="16px"
-                      viewBox="0 -960 960 960"
-                      width="16px"
-                      fill="#575B5F"
-                    >
-                      <path d="M144-264v-72h432v72H144Zm0-180v-72h672v72H144Zm0-180v-72h672v72H144Z" />
-                    </svg>
-                  </div>
-                  <p className="flex-1 basis-0 overflow-hidden overflow-ellipsis whitespace-nowrap leading-5">
-                    {chat.title}
-                  </p>
-                  <div className="w-6 h-6 "></div>
-                </button>
-                <div className="opacity-0 hover:opacity-100 absolute top-0 right-0 flex items-center  p-1">
-                  <button className="flex justify-center items-center rounded-full hover:bg-[rgba(144,158,174,0.3)] w-7 h-7 px-[6px] py-[1px]">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="20px"
-                      viewBox="0 -960 960 960"
-                      width="20px"
-                      fill="#1B1C1D"
-                    >
-                      <path d="M479.79-192Q450-192 429-213.21t-21-51Q408-294 429.21-315t51-21Q510-336 531-314.79t21 51Q552-234 530.79-213t-51 21Zm0-216Q450-408 429-429.21t-21-51Q408-510 429.21-531t51-21Q510-552 531-530.79t21 51Q552-450 530.79-429t-51 21Zm0-216Q450-624 429-645.21t-21-51Q408-726 429.21-747t51-21Q510-768 531-746.79t21 51Q552-666 530.79-645t-51 21Z" />
-                    </svg>
+            <SignedOut>
+              <div className="flex max-w-sm flex-col rounded-2xl bg-[#dde3ea] px-5 py-4 text-[#1b1c1d]">
+                <p className="mb-1 text-sm font-medium">
+                  Sign in to start saving your chats
+                </p>
+                <p className="mb-4 text-sm">
+                  The chats that you see here are temporary, and will not be
+                  saved unless you sign in.
+                </p>
+                <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[#0b57d0] hover:bg-[rgba(105,145,214,0.2)]" />
+              </div>
+            </SignedOut>
+            {renderChats(0, 5)}
+            {chats.length > 5 && (
+              <>
+                <div className="text-[14px] text-[#575B5F]">
+                  <button
+                    onClick={() => {
+                      setShowMore(!showMore);
+                    }}
+                    className="flex w-full cursor-pointer items-center rounded-[20px] px-3 py-2 text-left hover:bg-[rgba(211,227,253,0.5)]"
+                  >
+                    <p className="leading-5 font-medium">
+                      {showMore ? "Show less" : "Show more"}
+                    </p>
+                    <DownArrowIcon
+                      className={showMore ? "rotate-180 transform" : ""}
+                    />
                   </button>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                {showMore && renderChats(5, chats.length)}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -38,3 +38,7 @@ export const generateRandomID = (length: number = 10): string => {
   return userId;
 };
 
+export const fixBrokenMarkdownTables = (text: string): string => {
+  return text.replace(/(\|[^|\n]+\|)(?=\s*\|)/g, '$1\n');
+}
+

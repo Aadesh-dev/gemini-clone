@@ -1,9 +1,7 @@
 "use client";
 
-import { ChatInfo } from "@/app/types";
-import { deleteChatsByUserID } from "@/lib/actions/chat.actions";
-import { ChatInfoContext, UserContext } from "@/lib/contexts";
-import { useSearchParams } from "next/navigation";
+import { ChatType, UserType } from "@/app/types";
+import { ChatsContext, ModelContext, UserContext } from "@/lib/contexts";
 import React, { useEffect, useRef, useState } from "react";
 
 const useWindowUnloadEffect = (handler: () => void, callOnCleanup: boolean) => {
@@ -25,11 +23,15 @@ const useWindowUnloadEffect = (handler: () => void, callOnCleanup: boolean) => {
 };
 
 const Gemini = ({
+  currentUser,
   children,
 }: {
+  currentUser: UserType | null;
   children: React.ReactNode;
 }) => {
-  const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
+  const [chats, setChats] = useState<ChatType[] | []>([]);
+  const [user, setUser] = useState<UserType | null>(currentUser);
+  const [model, setModel] = useState<string>("gemini-2.5-flash-preview-05-20");
 
   // useWindowUnloadEffect(() => {
   //   if (userID) {
@@ -56,11 +58,13 @@ const Gemini = ({
   // }, [userID]);
 
   return (
-    //<UserContext.Provider value={user}>
-    <ChatInfoContext.Provider value={{ chatInfo, setChatInfo }}>
-      {children}
-    </ChatInfoContext.Provider>
-    //</UserContext.Provider>
+    <UserContext.Provider value={{ user, setUser }}>
+      <ChatsContext.Provider value={{ chats, setChats }}>
+        <ModelContext.Provider value={{ model, setModel }}>
+          {children}
+        </ModelContext.Provider>
+      </ChatsContext.Provider>
+    </UserContext.Provider>
   );
 };
 

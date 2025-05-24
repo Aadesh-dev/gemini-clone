@@ -5,76 +5,85 @@ import {
   DialogContent,
   DialogTrigger,
   DialogTitle,
+  DialogHeader,
 } from "@/components/ui/dialog";
+import { ModelContext, UserContext } from "@/lib/contexts";
 import Image from "next/image";
+import { useContext, useState } from "react";
+import CheckmarkIcon from "./icons/CheckmarkIcon";
+import { useRouter } from "next/navigation";
 
 const ModelsDialog = () => {
+  const router = useRouter();
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    throw new Error("Chat must be used within a UserContext.Provider");
+  }
+
+  const { user } = userContext;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const dialogContentClass = `${user && user.sidebarExpanded ? "left-[22%]" : "left-[6%]"} top-[12.5%] w-80 gap-0 bg-[#f0f4f9] px-0 py-5 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none`;
+
+  const onModelClick = () => {
+    setIsOpen(false);
+    router.push("/app/");
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger className="hover:bg-gray-200 flex items-center rounded-lg py-1 px-2 h-10 gap-1 cursor-pointer">
-        <span className="text-[#1B1C1D] text-[20px] leading-7">Gemini</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          height="24px"
-          viewBox="0 -960 960 960"
-          width="24px"
-          fill="#444746"
-        >
-          <path d="M480-360 280-560h400L480-360Z" />
-        </svg>
-      </DialogTrigger>
-      <DialogContent className="top-[58px] left-[336px] bg-[#f0f4f9] w-80 py-2 px-0 gap-0 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)]">
-        <DialogTitle className="sr-only">Change Gemini model</DialogTitle>
-        <button className="flex gap-3 h-12 items-center hover:bg-gray-200 px-4 cursor-pointer">
-          <Image
-            alt="Gemini logo"
-            width={24}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger className="flex cursor-pointer flex-col gap-1 px-2">
+        <span className="text-left text-[20px] leading-7 text-[#1B1C1D]">
+          Gemini
+        </span>
+        <div className="flex rounded-2xl bg-[#f0f4f9] pr-1 pl-3 text-[#575b5f] hover:bg-[#dde3ea]">
+          <span className="text-[14px] font-medium">2.5 Flash</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             height={24}
-            src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg"
-          ></Image>
-          <div className="flex justify-between w-full items-center">
-            <div className="flex flex-col text-left">
-              <span className="text-[14px] font-medium">Gemini</span>
-              <span className="text-[12px]">with 1.5 Flash</span>
+            viewBox="0 -960 960 960"
+            width={24}
+            fill="#575b5f"
+          >
+            <path d="M480-360 280-560h400L480-360Z" />
+          </svg>
+        </div>
+      </DialogTrigger>
+      <DialogContent
+        className={dialogContentClass}
+        onClick={() => setIsOpen(false)}
+      >
+        <DialogTitle className="sr-only">Change Gemini model</DialogTitle>
+        <DialogHeader className="px-5 pb-2 text-[14px] leading-5 font-medium text-[#727676]">
+          Choose your model
+        </DialogHeader>
+        <button
+          className="h-12 cursor-pointer items-center pr-4 pl-5 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]"
+          onClick={onModelClick}
+        >
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col text-left text-xs">
+              <span className="font-medium">2.5 Flash</span>
+              <span>Our next reasoning model built for speed</span>
             </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20px"
-              viewBox="0 -960 960 960"
-              width="20px"
-              fill="#444746"
-              className="mr-3"
-            >
-              <path d="m429-336 238-237-51-51-187 186-85-84-51 51 136 135Zm51 240q-79 0-149-30t-122.5-82.5Q156-261 126-331T96-480q0-80 30-149.5t82.5-122Q261-804 331-834t149-30q80 0 149.5 30t122 82.5Q804-699 834-629.5T864-480q0 79-30 149t-82.5 122.5Q699-156 629.5-126T480-96Zm0-72q130 0 221-91t91-221q0-130-91-221t-221-91q-130 0-221 91t-91 221q0 130 91 221t221 91Zm0-312Z" />
-            </svg>
+            <CheckmarkIcon />
           </div>
         </button>
-        <div className="flex items-center">
-          <button
-            className="flex gap-3 h-12 items-center px-4 opacity-[0.38] w-full cursor-pointer"
-            disabled
-          >
-            <Image
-              alt="Gemini logo"
-              width={24}
-              height={24}
-              src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_advanced_1743d7b7a7bc01f38e6f4.svg"
-            ></Image>
-            <div className="flex justify-between w-full items-center">
-              <div className="flex flex-col text-left">
-                <span className="text-[14px] font-medium">Gemini Advanced</span>
-                <span className="text-[12px]">with 1.5 Pro</span>
-              </div>
-            </div>
-          </button>
+        <div className="flex items-center gap-3 px-5">
+          <div className="flex flex-col text-left text-xs">
+            <span className="font-medium">Upgrade to Gemini Advanced</span>
+            <span>Get our most capable models & features</span>
+          </div>
           <button
             onClick={() =>
               window.open(
                 "https://one.google.com/explore-plan/gemini-advanced",
-                "_blank"
+                "_blank",
               )
             }
-            className="text-[#0842A0] bg-[#e9eef6] hover:bg-[rgba(100,149,237,0.2)] px-6 mr-4 rounded-full h-10 text-[14px] font-medium hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)] cursor-pointer"
+            className="h-10 cursor-pointer rounded-full bg-[#e9eef6] px-6 text-[14px] font-medium text-[#0842A0] hover:bg-[rgba(100,149,237,0.2)] hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)]"
           >
             Upgrade
           </button>
