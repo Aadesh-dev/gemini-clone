@@ -5,6 +5,7 @@ import SignIn from "@/components/SignIn";
 import { getUserByClerkID } from "@/lib/actions/user.actions";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
@@ -13,6 +14,16 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 
   if (userId) {
     user = await getUserByClerkID(userId);
+  } else {
+    // Only purpose to set this user object is for positioning of the models dialog with respect to the sidebar.
+    user = {
+      _id: "",
+      clerkID: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      sidebarExpanded: false,
+    };
   }
 
   return (
@@ -34,8 +45,19 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                   About Gemini
                 </a>
               </SignedOut>
-              <div className="my-4 mr-8">
-                <SignedIn>
+              <SignedIn>
+                <Link
+                  href="/sign-in"
+                  className="mt-3 mr-5 flex h-9 items-center justify-center gap-2 self-start rounded-[8px] bg-[#dde3ea] px-6 text-xs font-medium text-[#1b1c1d]"
+                >
+                  <img
+                    width={16}
+                    height={16}
+                    src="https://www.gstatic.com/lamda/images/gemini_sparkle_red_4ed1cbfcbc6c9e84c31b987da73fc4168aec8445.svg"
+                  ></img>
+                  <span>Upgrade</span>
+                </Link>
+                <div className="my-5 mr-5">
                   <UserButton
                     appearance={{
                       elements: {
@@ -46,11 +68,13 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                       },
                     }}
                   />
-                </SignedIn>
-                <SignedOut>
-                  <SignIn className="inline-block rounded-full bg-[#0b57d0] px-6 py-[10px] text-center text-sm font-medium text-white hover:bg-blue-700" />
-                </SignedOut>
-              </div>
+                </div>
+              </SignedIn>
+              <SignedOut>
+                <div className="my-5 mr-5">
+                  <SignIn className="inline-block min-w-24 rounded border-1 border-transparent bg-[#1a73e8] py-[9px] text-center text-sm leading-4 font-medium text-white hover:bg-[#1b66c9]" />
+                </div>
+              </SignedOut>
             </div>
           </div>
           {children}

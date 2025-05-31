@@ -38,7 +38,9 @@ declare type ChatInfoContextType = {
 
 declare type ChatsContextType = {
   chats: ChatType[];
-  setChats: (chats: ChatType[]) => void;
+  setChats: (
+    chats: ChatType[] | ((prevChats: ChatType[]) => ChatType[]),
+  ) => void;
 };
 
 declare type UserContextType = {

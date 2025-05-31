@@ -3,15 +3,14 @@
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
-  DialogTitle,
   DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { ModelContext, UserContext } from "@/lib/contexts";
-import Image from "next/image";
+import { UserContext } from "@/lib/contexts";
+import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import CheckmarkIcon from "./icons/CheckmarkIcon";
-import { useRouter } from "next/navigation";
 
 const ModelsDialog = () => {
   const router = useRouter();
@@ -28,7 +27,6 @@ const ModelsDialog = () => {
   const dialogContentClass = `${user && user.sidebarExpanded ? "left-[22%]" : "left-[6%]"} top-[12.5%] w-80 gap-0 bg-[#f0f4f9] px-0 py-5 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none`;
 
   const onModelClick = () => {
-    setIsOpen(false);
     router.push("/app/");
   };
 

@@ -7,6 +7,7 @@ import Chat from "../database/models/chat.model";
 import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
+import mongoose from "mongoose";
 
 const populateUser = (query: any) =>
   query.populate({
@@ -69,19 +70,25 @@ export const getChatTitle = async (prompt: string, model: string) => {
 export const getChatByID = async (
   chatID: string,
   guest: boolean,
-): Promise<ChatType> => {
+): Promise<ChatType | null> => {
   let chat;
 
   try {
     await connectToDatabase();
 
-    if (guest) {
-      chat = await Chat.findById(chatID);
-    } else {
-      chat = await populateUser(Chat.findById(chatID));
+    if (!mongoose.Types.ObjectId.isValid(chatID)) {
+      console.warn(`Invalid chatID format: ${chatID}`);
+      return null;
     }
 
-    if (!chat) throw new Error("Chat not found");
+    chat = await Chat.findById(chatID);
+    if (!chat) {
+      return null;
+    }
+
+    if (!guest) {
+      chat = await populateUser(chat);
+    }
   } catch (error) {
     handleError(error);
   }
@@ -129,6 +136,34 @@ export const updateChatByID = async (
 };
 
 // DELETE
+export const deleteChat = async (chatID: string) => {
+  try {
+    await connectToDatabase();
+
+    // Validate chatID format first
+    if (!mongoose.Types.ObjectId.isValid(chatID)) {
+      throw new Error("Invalid Chat ID format");
+    }
+
+    const chatToDelete = await Chat.findById(chatID);
+
+    if (!chatToDelete) {
+      throw new Error("Chat not found");
+    }
+
+    const deletedChat = await Chat.findByIdAndDelete(chatID);
+
+    if (!deletedChat) {
+      throw new Error("Chat could not be deleted"); // Should ideally not happen if found, but good for safety
+    }
+
+    return JSON.parse(JSON.stringify(deletedChat));
+
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export async function deleteChatsByUserID(userID: string) {
   try {
     await connectToDatabase();
