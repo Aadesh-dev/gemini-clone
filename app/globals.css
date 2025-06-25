@@ -2,6 +2,12 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss";
 
+@plugin "tailwindcss-animate";
+
+@theme {
+  --breakpoint-md: 60rem;
+}
+
 /* Pseudo-classes */
 
 /* Pseudo-elements */

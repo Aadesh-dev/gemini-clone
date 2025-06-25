@@ -91,8 +91,8 @@ const Chat = ({
             {messages.map((m, index: number) => (
               <React.Fragment key={index}>
                 {m.role === "user" ? (
-                  <div className="flex justify-end py-2">
-                    <div className="pb-6">
+                  <div className="flex justify-end py-4 md:py-2">
+                    <div className="ml-13 max-md:mt-3 md:pb-6">
                       <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[#e9eef6] px-4 py-3">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
@@ -124,11 +124,11 @@ const Chat = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="mb-9 flex">
+                  <div className="mb-8 md:mb-9 md:flex">
                     {index === messages.length - 1 && status === "streaming" ? (
                       <LoadingStarIcon />
                     ) : (
-                      <div className={"mr-[20px]"}>
+                      <div className="max-md:h-10 md:mr-5">
                         <GeminiStarIcon width={32} height={32} />
                       </div>
                     )}
@@ -138,23 +138,26 @@ const Chat = ({
                         components={{
                           strong: StrongTag,
                           table: ({ children }) => (
-                            <table className="my-4 overflow-hidden rounded-2xl text-left text-sm leading-5">
+                            <div className="overflow-auto rounded-xl border border-gray-200">
+                              <table className="min-w-full table-auto border-collapse text-left text-sm text-gray-800">
+                                {children}
+                              </table>
+                            </div>
+                          ),
+                          thead: ({ children }) => (
+                            <thead className="bg-gray-100 font-semibold text-gray-900">
                               {children}
-                            </table>
+                            </thead>
                           ),
                           th: ({ children }) => (
-                            <th className="bg-[#e9eef6] px-3 py-2 font-medium">
-                              {children}
-                            </th>
+                            <th className="border-b px-4 py-2">{children}</th>
                           ),
                           td: ({ children }) => (
-                            <td className="bg-[#f8fafd] px-3 py-2">
-                              {children}
-                            </td>
+                            <td className="border-b px-4 py-2">{children}</td>
                           ),
                         }}
                       >
-                        {m.content}
+                        {fixBrokenMarkdownTables(m.content)}
                       </ReactMarkdown>
                     </div>
                   </div>
@@ -184,7 +187,7 @@ const Chat = ({
             </h1>
           )}
           <SignedOut>
-            <h1 className="pointer-events-none mx-auto w-[725px] text-center text-[45px] leading-13 font-medium">
+            <h1 className="pointer-events-none mx-auto w-[725px] text-center text-[36px] leading-13 font-medium md:text-[45px]">
               <span>Meet&nbsp;</span>
               <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
                 Gemini

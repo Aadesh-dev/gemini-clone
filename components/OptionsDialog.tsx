@@ -7,8 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
-import DeleteDialog from "./DeleteDialog";
 import DeleteIcon from "./icons/DeleteIcon";
 import OptionsIcon from "./icons/OptionsIcon";
 
@@ -16,13 +14,11 @@ const OptionsDialog = ({
   currentChat,
   chat,
   setChatOptionsOpened,
-  isDeleteDialogOpen,
   setIsDeleteDialogOpen,
 }: {
   currentChat: ChatType;
   chat: ChatType;
   setChatOptionsOpened: (chat: ChatType | null) => void;
-  isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: (isOpen: boolean) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,10 +45,9 @@ const OptionsDialog = ({
         }
         onClick={() => {
           setChatOptionsOpened(chat);
-          //setIsOpen(true);
         }}
       >
-        <OptionsIcon />
+        <OptionsIcon width="20px" height="20px" fontSize={20} fill="#1B1C1D" />
       </DialogTrigger>
       <DialogContent
         className={dialogContentClass}
@@ -65,11 +60,10 @@ const OptionsDialog = ({
           onClick={() => setIsDeleteDialogOpen(true)}
         >
           <div className="flex w-full items-center">
-            <DeleteIcon />
+            <DeleteIcon width="20px" height="20px" />
             <span className="ml-[10px]">Delete</span>
           </div>
         </button>
-        {/* <DeleteDialog currentChat={currentChat} chat={chat} /> */}
       </DialogContent>
     </Dialog>
   );
