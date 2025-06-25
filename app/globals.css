@@ -2,6 +2,12 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss";
 
+@plugin "tailwindcss-animate";
+
+@theme {
+  --breakpoint-md: 60rem;
+}
+
 /* Pseudo-classes */
 
 /* Pseudo-elements */
@@ -33,6 +39,14 @@ ul, ol {
 
 .text {
   @apply text-[#1b1c1d];
+}
+
+.Toastify__toast {
+  @apply py-[14px] pl-4 pr-2 bg-[#1b1c1d] min-h-0;
+}
+
+.Toastify__close-button {
+  @apply hidden;
 }
 
 @layer utilities {
