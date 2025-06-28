@@ -123,11 +123,13 @@ export const updateChatByID = async (
     await connectToDatabase();
 
     const existingChat = await getChatByID(chatID, guest);
+    console.log("Existing Chat:", existingChat);
 
     updatedChat = await Chat.findByIdAndUpdate(chatID, {
       ...existingChat,
       ...chat,
     });
+    console.log("Updated Chat:", updatedChat);
     //revalidatePath(path);
   } catch (error) {
     handleError(error);
@@ -158,7 +160,6 @@ export const deleteChat = async (chatID: string) => {
     }
 
     return JSON.parse(JSON.stringify(deletedChat));
-
   } catch (error) {
     handleError(error);
   }
