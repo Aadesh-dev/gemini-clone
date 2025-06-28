@@ -20,6 +20,7 @@ export async function POST(req: Request) {
         messages,
         responseMessages: response.messages,
       });
+      console.log("Merged messages:", mergedMessages);
       updateChatByID(
         id,
         {
