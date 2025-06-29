@@ -7,10 +7,8 @@ import { NextResponse } from "next/server";
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  console.log("Received POST request for chat streaming");
   const { messages, id, title, userId, model } = await req.json();
-  console.log("Messages:", messages);
-  console.log("Chat ID:", id);
+  //console.log("Messages:", messages);
 
   const result = streamText({
     model: google(model),
@@ -22,7 +20,7 @@ export async function POST(req: Request) {
         messages,
         responseMessages: response.messages,
       });
-      console.log("Merged messages:", mergedMessages);
+      //console.log("Merged messages:", mergedMessages);
       await updateChatByID(
         id,
         {
@@ -34,7 +32,6 @@ export async function POST(req: Request) {
     },
   });
 
-  console.log("Streaming result initialized");
   return result.toDataStreamResponse();
 }
 
