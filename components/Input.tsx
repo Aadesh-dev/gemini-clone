@@ -87,7 +87,6 @@ const Input = ({
     let newTitle = title;
     if (title === "New Chat") {
       newTitle = await getChatTitle(input, model);
-      console.log("Generated title:", newTitle);
       setTitle(newTitle);
 
       const chatIndex = chats.findIndex((c) => c._id === chatID);
