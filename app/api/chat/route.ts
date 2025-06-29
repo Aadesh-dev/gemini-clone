@@ -9,6 +9,7 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   console.log("Received POST request for chat streaming");
   const { messages, id, title, userId, model } = await req.json();
+  console.log("Messages:", messages);
 
   const result = streamText({
     model: google(model),
