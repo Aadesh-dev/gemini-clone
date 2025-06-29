@@ -10,19 +10,20 @@ export async function POST(req: Request) {
   console.log("Received POST request for chat streaming");
   const { messages, id, title, userId, model } = await req.json();
   console.log("Messages:", messages);
+  console.log("Chat ID:", id);
 
   const result = streamText({
     model: google(model),
     system: "You are a helpful assistant.",
     experimental_transform: smoothStream(),
     messages,
-    onFinish({ response }) {
+    onFinish: async ({ response }) => {
       const mergedMessages = appendResponseMessages({
         messages,
         responseMessages: response.messages,
       });
       console.log("Merged messages:", mergedMessages);
-      updateChatByID(
+      await updateChatByID(
         id,
         {
           messages: mergedMessages,
