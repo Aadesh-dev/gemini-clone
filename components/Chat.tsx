@@ -1,21 +1,25 @@
 "use client";
 
-import { ChatType, UserType } from "@/app/types";
+import { ChatType } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
-import { ChatsContext, ModelContext, UserContext } from "@/lib/contexts";
+import { ChatsContext, UserContext } from "@/lib/contexts";
+import { fixBrokenMarkdownTables, stripTableCodeFencesOnly } from "@/lib/utils";
 import { Message, useChat } from "@ai-sdk/react";
+import { SignedOut } from "@clerk/nextjs";
 import React, { useContext, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import Input from "./Input";
-import GeminiStarIcon from "./icons/GeminiStarIcon";
-import { SignedOut } from "@clerk/nextjs";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import remarkGfm from "remark-gfm";
-import { fixBrokenMarkdownTables } from "@/lib/utils";
+import Input from "./Input";
 import LoadingStarIcon from "./LoadingStarIcon";
+import GeminiStarIcon from "./icons/GeminiStarIcon";
+import { Source_Code_Pro } from "next/font/google";
+import CodeBlock from "./CodeBlock";
 
-function StrongTag({ children }: React.PropsWithChildren) {
-  return <strong className="font-medium">{children}</strong>;
-}
+const code = Source_Code_Pro({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+});
 
 const Chat = ({
   chatID,
@@ -94,30 +98,7 @@ const Chat = ({
                   <div className="flex justify-end py-4 md:py-2">
                     <div className="ml-13 max-md:mt-3 md:pb-6">
                       <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[#e9eef6] px-4 py-3">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            strong: StrongTag,
-                            table: ({ children }) => (
-                              <div className="overflow-auto rounded-xl border border-gray-200">
-                                <table className="min-w-full table-auto border-collapse text-left text-sm text-gray-800">
-                                  {children}
-                                </table>
-                              </div>
-                            ),
-                            thead: ({ children }) => (
-                              <thead className="bg-gray-100 font-semibold text-gray-900">
-                                {children}
-                              </thead>
-                            ),
-                            th: ({ children }) => (
-                              <th className="border-b px-4 py-2">{children}</th>
-                            ),
-                            td: ({ children }) => (
-                              <td className="border-b px-4 py-2">{children}</td>
-                            ),
-                          }}
-                        >
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {fixBrokenMarkdownTables(m.content)}
                         </ReactMarkdown>
                       </div>
@@ -132,32 +113,70 @@ const Chat = ({
                         <GeminiStarIcon width={32} height={32} />
                       </div>
                     )}
-                    <div className="prose pt-1">
+                    <div className="pt-1">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          strong: StrongTag,
                           table: ({ children }) => (
-                            <div className="overflow-auto rounded-xl border border-gray-200">
-                              <table className="min-w-full table-auto border-collapse text-left text-sm text-gray-800">
+                            <div className="overflow-auto rounded-2xl bg-[#f8fafd]">
+                              <table className="min-w-full table-auto border-collapse text-left text-sm">
                                 {children}
                               </table>
                             </div>
                           ),
                           thead: ({ children }) => (
-                            <thead className="bg-gray-100 font-semibold text-gray-900">
-                              {children}
-                            </thead>
+                            <thead className="bg-[#f8fafd]">{children}</thead>
                           ),
                           th: ({ children }) => (
-                            <th className="border-b px-4 py-2">{children}</th>
+                            <th className="px-3 py-2 font-normal">
+                              <p className="mb-4">{children}</p>
+                            </th>
                           ),
                           td: ({ children }) => (
-                            <td className="border-b px-4 py-2">{children}</td>
+                            <td className="px-3 py-2">
+                              <p className="mb-4">{children}</p>
+                            </td>
                           ),
+                          code: CodeBlock,
+                          // code({ className, children }) {
+                          //   const language = className?.replace(
+                          //     "language-",
+                          //     "",
+                          //   );
+
+                          //   return language ? (
+                          //     <SyntaxHighlighter
+                          //       // style={oneLight}
+                          //       language={language}
+                          //       customStyle={{
+                          //         backgroundColor: "#f0f4f9",
+                          //         borderRadius: 16,
+                          //         fontSize: 14,
+                          //         padding: 16,
+                          //         marginTop: 16,
+                          //         marginBottom: 16,
+                          //       }}
+                          //       codeTagProps={{
+                          //         className: code.className,
+                          //       }}
+                          //     >
+                          //       {/* {String(children)} */}
+                          //       {String(children).replace(/\n$/, "")}
+                          //     </SyntaxHighlighter>
+                          //   ) : (
+                          //     <code
+                          //       className={
+                          //         "rounded-[6px] bg-[#f0f4f9] px-[6px] py-[1px] text-[14px] " +
+                          //         code.className
+                          //       }
+                          //     >
+                          //       {children}
+                          //     </code>
+                          //   );
+                          // },
                         }}
                       >
-                        {fixBrokenMarkdownTables(m.content)}
+                        {stripTableCodeFencesOnly(m.content)}
                       </ReactMarkdown>
                     </div>
                   </div>
