@@ -20,6 +20,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
       firstName: "",
       lastName: "",
       sidebarExpanded: false,
+      showIntroMessage: false,
     };
   }
 

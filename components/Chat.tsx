@@ -3,7 +3,11 @@
 import { ChatType } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
 import { ChatsContext, UserContext } from "@/lib/contexts";
-import { fixBrokenMarkdownTables, stripTableCodeFencesOnly } from "@/lib/utils";
+import {
+  fixBrokenMarkdownTables,
+  handleError,
+  stripTableCodeFencesOnly,
+} from "@/lib/utils";
 import { Message, useChat } from "@ai-sdk/react";
 import { SignedOut } from "@clerk/nextjs";
 import React, { useContext, useEffect, useState } from "react";
@@ -15,6 +19,8 @@ import LoadingStarIcon from "./LoadingStarIcon";
 import GeminiStarIcon from "./icons/GeminiStarIcon";
 import { Source_Code_Pro } from "next/font/google";
 import CodeBlock from "./CodeBlock";
+import CloseIcon from "./icons/CloseIcon";
+import axios from "axios";
 
 const code = Source_Code_Pro({
   weight: ["400", "600"],
@@ -34,6 +40,7 @@ const Chat = ({
 }) => {
   //State
   const [height, setHeight] = useState(24);
+  const [showIntroMessage, setShowIntroMessage] = useState(false);
 
   //Other
   const { input, handleInputChange, handleSubmit, messages, status, stop } =
@@ -56,7 +63,23 @@ const Chat = ({
   }
 
   const { chats, setChats } = chatsContext;
-  const { user } = userContext;
+  const { user, setUser } = userContext;
+
+  const handleIntroMessageClose = async () => {
+    setShowIntroMessage(!showIntroMessage);
+    if (user) {
+      setUser({ ...user, showIntroMessage: !showIntroMessage });
+
+      try {
+        await axios.put("/api/user", {
+          clerkID: userId,
+          user: { ...user, showIntroMessage: !showIntroMessage },
+        });
+      } catch (error: any) {
+        handleError(error);
+      }
+    }
+  };
 
   useEffect(() => {
     const newChat: ChatType = {
@@ -82,8 +105,14 @@ const Chat = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      setShowIntroMessage((user && user.showIntroMessage) || false);
+    }
+  }, [user, chats]);
+
   return (
-    <div className="flex flex-col items-center justify-between">
+    <div className="flex flex-col items-center justify-between px-4">
       {messages.length ? (
         <div
           className="w-full overflow-y-auto pt-4 pr-4 pb-5 pl-7"
@@ -138,42 +167,6 @@ const Chat = ({
                             </td>
                           ),
                           code: CodeBlock,
-                          // code({ className, children }) {
-                          //   const language = className?.replace(
-                          //     "language-",
-                          //     "",
-                          //   );
-
-                          //   return language ? (
-                          //     <SyntaxHighlighter
-                          //       // style={oneLight}
-                          //       language={language}
-                          //       customStyle={{
-                          //         backgroundColor: "#f0f4f9",
-                          //         borderRadius: 16,
-                          //         fontSize: 14,
-                          //         padding: 16,
-                          //         marginTop: 16,
-                          //         marginBottom: 16,
-                          //       }}
-                          //       codeTagProps={{
-                          //         className: code.className,
-                          //       }}
-                          //     >
-                          //       {/* {String(children)} */}
-                          //       {String(children).replace(/\n$/, "")}
-                          //     </SyntaxHighlighter>
-                          //   ) : (
-                          //     <code
-                          //       className={
-                          //         "rounded-[6px] bg-[#f0f4f9] px-[6px] py-[1px] text-[14px] " +
-                          //         code.className
-                          //       }
-                          //     >
-                          //       {children}
-                          //     </code>
-                          //   );
-                          // },
                         }}
                       >
                         {stripTableCodeFencesOnly(m.content)}
@@ -193,20 +186,20 @@ const Chat = ({
         </div>
       ) : (
         <div
-          className="grid w-full place-items-center overflow-y-auto pt-4 pr-4 pb-[6px] pl-7"
+          className="flex w-full justify-center overflow-y-auto pt-4 pr-4 pb-[6px] pl-7"
           style={{
             height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
           }}
         >
           {userId && (
-            <h1 className="pointer-events-none mx-auto text-center text-[32px] leading-10 font-medium">
+            <h1 className="relative bottom-[15%] mx-auto self-center text-center text-[32px] leading-10 font-medium select-none">
               <span className="bg-[linear-gradient(74deg,_rgb(66,133,244)_0px,_rgb(155,114,203)_9%,_rgb(217,101,112)_20%,_rgb(217,101,112)_24%,_rgb(155,114,203)_35%,_rgb(66,133,244)_44%,_rgb(155,114,203)_50%,_rgb(217,101,112)_56%,_rgb(255,255,255)_75%,_rgb(255,255,255)_100%)] bg-[length:400%_100%] bg-clip-text text-transparent">
                 Hello, {user?.firstName}
               </span>
             </h1>
           )}
           <SignedOut>
-            <h1 className="pointer-events-none mx-auto w-[725px] text-center text-[36px] leading-13 font-medium md:text-[45px]">
+            <h1 className="relative bottom-[15%] mx-auto w-[725px] self-center text-center text-[36px] leading-13 font-medium select-none md:text-[45px]">
               <span>Meet&nbsp;</span>
               <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
                 Gemini
@@ -218,7 +211,60 @@ const Chat = ({
           </SignedOut>
         </div>
       )}
-      <div className="absolute bottom-0 w-full">
+      <div className="absolute bottom-0 w-full px-4">
+        {showIntroMessage && (
+          <div className="mx-auto mb-4 w-[760px] max-w-full rounded-2xl bg-[#f0f4f9] px-6 py-5 text-[#1b1c1d]">
+            <div className="mt-1 mb-3 flex w-full items-center justify-between">
+              <p className="text-xl font-medium">
+                Welcome to{" "}
+                <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
+                  Gemini
+                </span>
+                , your personal AI assistant
+              </p>
+              <button
+                className="cursor-pointer rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
+                onClick={handleIntroMessageClose}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <p className="mb-2 text-xs">
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                className="leading-4 text-[#0b57d0] underline"
+              >
+                Google Terms
+              </a>{" "}
+              and the{" "}
+              <a
+                href="https://support.google.com/bard/answer/13594961"
+                target="_blank"
+                className="leading-4 text-[#0b57d0] underline"
+              >
+                Gemini Apps Privacy Notice
+              </a>{" "}
+              apply. Chats are reviewed and used to improve Google AI.{" "}
+              <a
+                href="https://myactivity.google.com/product/gemini?utm_source=gemini"
+                target="_blank"
+                className="leading-4 text-[#0b57d0] underline"
+              >
+                Learn about your choices
+              </a>
+              . Gemini can make mistakes, so double-check it. Info{" "}
+              <a
+                href="https://support.google.com/gemini/answer/13594961#location&zippy=%2Cwhat-location-information-do-gemini-apps-collect-why-and-how-is-it-used"
+                target="_blank"
+                className="leading-4 text-[#0b57d0] underline"
+              >
+                about your location
+              </a>{" "}
+              is also stored with your Gemini Apps activity.
+            </p>
+          </div>
+        )}
         <div className="relative flex w-full justify-center bg-white before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,100)_60%)] before:content-['']">
           <div className="z-[1] w-[760px]">
             <Input

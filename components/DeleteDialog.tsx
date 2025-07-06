@@ -84,6 +84,7 @@ const DeleteDialog = ({
           <a
             href="https://support.google.com/gemini?p=deleted_chats"
             className="leading-5 text-[#0b57d0] underline"
+            target="_blank"
           >
             Learn more
           </a>
