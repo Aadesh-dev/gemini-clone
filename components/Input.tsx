@@ -2,11 +2,13 @@
 
 import { ChatType } from "@/app/types";
 import { getChatTitle } from "@/lib/actions/chat.actions";
-import { ChatsContext, ModelContext } from "@/lib/contexts";
+import { ChatsContext, ModelContext, UserContext } from "@/lib/contexts";
 import { ChatRequestOptions } from "ai";
 import React, { useContext, useRef, useState } from "react";
 import SendIcon from "./icons/SendIcon";
 import StopIcon from "./icons/StopIcon";
+import axios from "axios";
+import { handleError } from "@/lib/utils";
 
 const Input = ({
   chatID,
@@ -46,6 +48,7 @@ const Input = ({
   //chatsContext
   const chatsContext = useContext(ChatsContext);
   const modelContext = useContext(ModelContext);
+  const userContext = useContext(UserContext);
 
   //Other
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -58,8 +61,13 @@ const Input = ({
     throw new Error("Chat must be used within a ModelContext.Provider");
   }
 
+  if (!userContext) {
+    throw new Error("Chat must be used within a UserContext.Provider");
+  }
+
   const { chats, setChats } = chatsContext;
   const { model } = modelContext;
+  const { user, setUser } = userContext;
 
   const onPromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleInputChange(e);
@@ -103,6 +111,19 @@ const Input = ({
         ...chats.slice(chatIndex + 1),
       ];
       setChats(newChats);
+    }
+
+    if (userId && user) {
+      setUser({ ...user, showIntroMessage: false });
+
+      try {
+        await axios.put("/api/user", {
+          clerkID: userId,
+          user: { ...user, showIntroMessage: false },
+        });
+      } catch (error: any) {
+        handleError(error);
+      }
     }
 
     handleSubmit(event, {

@@ -9,6 +9,7 @@ declare type UserType = {
   firstName: string | null;
   lastName: string | null;
   sidebarExpanded: boolean;
+  showIntroMessage: boolean;
 };
 
 // ====== CHAT ======

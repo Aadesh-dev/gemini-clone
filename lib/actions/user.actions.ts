@@ -47,6 +47,7 @@ export async function updateUser(
     firstName: string | null;
     lastName: string | null;
     sidebarExpanded?: boolean;
+    showIntroMessage?: boolean;
   },
 ): Promise<UserType> {
   let updatedUser;

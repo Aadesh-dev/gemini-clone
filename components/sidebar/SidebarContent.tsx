@@ -144,15 +144,19 @@ const SidebarContent = ({
             <div
               className={userId ? "py-1 pl-3 md:py-2" : "pt-2 pb-[9px] md:pl-3"}
             >
-              <h1
-                className={
-                  userId
-                    ? "text-[14px] font-medium text-[#727676]"
-                    : "text-[14px] font-medium text-[#444746] md:text-[#1b1c1d]"
-                }
-              >
-                Recent
-              </h1>
+              {chats.filter((chat) => chat.title !== "New Chat").length ? (
+                <h1
+                  className={
+                    userId
+                      ? "text-[14px] font-medium text-[#727676]"
+                      : "text-[14px] font-medium text-[#444746] md:text-[#1b1c1d]"
+                  }
+                >
+                  Recent
+                </h1>
+              ) : (
+                <></>
+              )}
             </div>
             <SignedOut>
               <div className="mb-3 flex flex-col rounded-2xl bg-[#dde3ea] px-5 py-4 text-[#444746] md:max-w-sm md:text-[#1b1c1d]">
