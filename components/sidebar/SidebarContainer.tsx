@@ -77,7 +77,7 @@ const SidebarContainer = ({ userId }: { userId: string | null }) => {
       <div className="absolute mt-4 ml-4 flex h-12 items-center md:hidden">
         <button
           onClick={handleHamburgerClick}
-          className="z-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
+          className="z-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <HamburgerIcon />
         </button>

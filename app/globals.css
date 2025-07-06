@@ -8,6 +8,41 @@
   --breakpoint-md: 60rem;
 }
 
+/* Root color variables */
+:root {
+  --background: 255 255 255;
+  --foreground: 27 28 29;
+  --primary: 66 133 244;
+  --secondary: 155 114 203;
+  --accent: 217 101 112;
+  --muted: 245 245 245;
+  --muted-foreground: 87 91 95;
+  --border: 221 227 234;
+  --input: 240 244 249;
+  --card: 255 255 255;
+  --sidebar: 248 250 253;
+  --chat-bubble: 233 238 246;
+  --table-bg: 248 250 253;
+  --intro-bg: 240 244 249;
+}
+
+.dark {
+  --background: 16 16 20;
+  --foreground: 224 224 224;
+  --primary: 138 180 248;
+  --secondary: 196 181 253;
+  --accent: 248 113 113;
+  --muted: 39 39 42;
+  --muted-foreground: 161 161 170;
+  --border: 39 39 42;
+  --input: 24 24 27;
+  --card: 24 24 27;
+  --sidebar: 24 24 27;
+  --chat-bubble: 39 39 42;
+  --table-bg: 39 39 42;
+  --intro-bg: 24 24 27;
+}
+
 /* Pseudo-classes */
 
 /* Pseudo-elements */
@@ -16,16 +51,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#dde3ea] rounded-[9999px];
+  @apply bg-gray-300 dark:bg-gray-600 rounded-[9999px];
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[rgb(196,199,197)];
+  @apply bg-gray-400 dark:bg-gray-500;
 }
 
 /* Element selectors */
 body {
-  @apply text-[rgb(var(--text))];
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors;
 }
 
 ul, ol {
@@ -38,11 +73,11 @@ ul, ol {
 }
 
 .text {
-  @apply text-[#1b1c1d];
+  @apply text-gray-900 dark:text-gray-100;
 }
 
 .Toastify__toast {
-  @apply py-[14px] pl-4 pr-2 bg-[#303030] min-h-0;
+  @apply py-[14px] pl-4 pr-2 bg-gray-700 dark:bg-gray-800 min-h-0;
 }
 
 .Toastify__close-button {
