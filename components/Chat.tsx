@@ -112,7 +112,7 @@ const Chat = ({
   }, [user, chats]);
 
   return (
-    <div className="flex flex-col items-center justify-between px-4">
+    <div className="flex flex-col items-center justify-between px-4 bg-white dark:bg-gray-900">
       {messages.length ? (
         <div
           className="w-full overflow-y-auto pt-4 pr-4 pb-5 pl-7"
@@ -120,14 +120,16 @@ const Chat = ({
             height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
           }}
         >
-          <div className="mx-auto w-[760px] leading-7 text-[#1b1c1d]">
+          <div className="mx-auto w-[760px] leading-7 text-gray-900 dark:text-gray-100">
             {messages.map((m, index: number) => (
               <React.Fragment key={index}>
                 {m.role === "user" ? (
                   <div className="flex justify-end py-4 md:py-2">
                     <div className="ml-13 max-md:mt-3 md:pb-6">
-                      <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[#e9eef6] px-4 py-3">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-gray-100 dark:bg-gray-800 px-4 py-3">
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]}
+                        >
                           {fixBrokenMarkdownTables(m.content)}
                         </ReactMarkdown>
                       </div>
@@ -147,14 +149,14 @@ const Chat = ({
                         remarkPlugins={[remarkGfm]}
                         components={{
                           table: ({ children }) => (
-                            <div className="overflow-auto rounded-2xl bg-[#f8fafd]">
+                            <div className="overflow-auto rounded-2xl bg-gray-50 dark:bg-gray-800">
                               <table className="min-w-full table-auto border-collapse text-left text-sm">
                                 {children}
                               </table>
                             </div>
                           ),
                           thead: ({ children }) => (
-                            <thead className="bg-[#f8fafd]">{children}</thead>
+                            <thead className="bg-gray-50 dark:bg-gray-800">{children}</thead>
                           ),
                           th: ({ children }) => (
                             <th className="px-3 py-2 font-normal">
@@ -179,7 +181,7 @@ const Chat = ({
             {status === "submitted" && (
               <div className="mb-9 flex">
                 <LoadingStarIcon />
-                <p>Just a sec...</p>
+                <p className="text-gray-900 dark:text-gray-100">Just a sec...</p>
               </div>
             )}
           </div>
@@ -200,20 +202,20 @@ const Chat = ({
           )}
           <SignedOut>
             <h1 className="relative bottom-[15%] mx-auto w-[725px] self-center text-center text-[36px] leading-13 font-medium select-none md:text-[45px]">
-              <span>Meet&nbsp;</span>
+              <span className="text-gray-900 dark:text-gray-100">Meet&nbsp;</span>
               <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
                 Gemini
               </span>
-              <span>,</span>
+              <span className="text-gray-900 dark:text-gray-100">,</span>
               <br />
-              <span>your personal AI assistant</span>
+              <span className="text-gray-900 dark:text-gray-100">your personal AI assistant</span>
             </h1>
           </SignedOut>
         </div>
       )}
       <div className="absolute bottom-0 w-full px-4">
         {showIntroMessage && (
-          <div className="mx-auto mb-4 w-[760px] max-w-full rounded-2xl bg-[#f0f4f9] px-6 py-5 text-[#1b1c1d]">
+          <div className="mx-auto mb-4 w-[760px] max-w-full rounded-2xl bg-gray-100 dark:bg-gray-800 px-6 py-5 text-gray-900 dark:text-gray-100">
             <div className="mt-1 mb-3 flex w-full items-center justify-between">
               <p className="text-xl font-medium">
                 Welcome to{" "}
@@ -223,7 +225,7 @@ const Chat = ({
                 , your personal AI assistant
               </p>
               <button
-                className="cursor-pointer rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
+                className="cursor-pointer rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
                 onClick={handleIntroMessageClose}
               >
                 <CloseIcon />
@@ -233,7 +235,7 @@ const Chat = ({
               <a
                 href="https://policies.google.com/terms"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-blue-600 dark:text-blue-400 underline"
               >
                 Google Terms
               </a>{" "}
@@ -241,7 +243,7 @@ const Chat = ({
               <a
                 href="https://support.google.com/bard/answer/13594961"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-blue-600 dark:text-blue-400 underline"
               >
                 Gemini Apps Privacy Notice
               </a>{" "}
@@ -249,7 +251,7 @@ const Chat = ({
               <a
                 href="https://myactivity.google.com/product/gemini?utm_source=gemini"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-blue-600 dark:text-blue-400 underline"
               >
                 Learn about your choices
               </a>
@@ -257,7 +259,7 @@ const Chat = ({
               <a
                 href="https://support.google.com/gemini/answer/13594961#location&zippy=%2Cwhat-location-information-do-gemini-apps-collect-why-and-how-is-it-used"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-blue-600 dark:text-blue-400 underline"
               >
                 about your location
               </a>{" "}
@@ -265,7 +267,7 @@ const Chat = ({
             </p>
           </div>
         )}
-        <div className="relative flex w-full justify-center bg-white before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,100)_60%)] before:content-['']">
+        <div className="relative flex w-full justify-center bg-white dark:bg-gray-900 before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,100)_60%)] dark:before:bg-[linear-gradient(180deg,_rgba(17,24,39,0)_0px,_rgba(17,24,39,100)_60%)] before:content-['']">
           <div className="z-[1] w-[760px]">
             <Input
               chatID={chatID}
@@ -279,7 +281,7 @@ const Chat = ({
               status={status}
               stop={stop}
             />
-            <p className="my-4 h-4 text-center text-xs leading-4 text-[#575b5f]">
+            <p className="my-4 h-4 text-center text-xs leading-4 text-gray-600 dark:text-gray-400">
               {messages.length ? (
                 "Gemini can make mistakes, so double-check it"
               ) : (

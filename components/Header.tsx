@@ -12,6 +12,7 @@ import PlusIcon from "./icons/PlusIcon";
 import OptionsDrawer from "./OptionsDrawer";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import ModelsDrawer from "./ModelsDrawer";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   //State
@@ -44,7 +45,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="mt-2 ml-14 md:ml-2">
           <button
             className="flex cursor-pointer flex-col gap-1 px-2"
@@ -52,17 +53,17 @@ const Header = () => {
               setIsModelsDialogOpen(true);
             }}
           >
-            <span className="text-left text-[20px] leading-7 text-[#1B1C1D]">
+            <span className="text-left text-[20px] leading-7 text-gray-900 dark:text-gray-100">
               Gemini
             </span>
-            <div className="flex rounded-2xl bg-[#f0f4f9] pr-1 pl-3 text-[#575b5f] hover:bg-[#dde3ea]">
+            <div className="flex rounded-2xl bg-gray-100 dark:bg-gray-800 pr-1 pl-3 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">
               <span className="text-[14px] font-medium">2.5 Flash</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height={24}
                 viewBox="0 -960 960 960"
                 width={24}
-                fill="#575b5f"
+                fill="currentColor"
               >
                 <path d="M480-360 280-560h400L480-360Z" />
               </svg>
@@ -74,13 +75,13 @@ const Header = () => {
             {areMessagesInChat && (
               <button
                 onClick={newChat}
-                className="mr-2 cursor-pointer rounded-[50%] bg-[#e9eef6] p-2 md:hidden"
+                className="mr-2 cursor-pointer rounded-[50%] bg-gray-100 dark:bg-gray-800 p-2 md:hidden hover:bg-gray-200 dark:hover:bg-gray-700"
               >
                 <PlusIcon />
               </button>
             )}
             <a
-              className="mt-[14px] mr-[22px] text-[14px] leading-5 font-medium text-[#575b5f] max-md:hidden"
+              className="mt-[14px] mr-[22px] text-[14px] leading-5 font-medium text-blue-600 dark:text-blue-400 max-md:hidden"
               href="https://gemini.google/about/"
               target="_blank"
             >
@@ -95,7 +96,7 @@ const Header = () => {
             )}
             <Link
               href="https://one.google.com/explore-plan/gemini-advanced"
-              className="mt-3 mr-5 hidden h-9 items-center justify-center gap-2 self-start rounded-[8px] bg-[#dde3ea] px-6 text-xs font-medium text-[#1b1c1d] md:flex"
+              className="mt-3 mr-5 hidden h-9 items-center justify-center gap-2 self-start rounded-[8px] bg-gray-200 dark:bg-gray-700 px-6 text-xs font-medium text-gray-900 dark:text-gray-100 md:flex hover:bg-gray-300 dark:hover:bg-gray-600"
               target="_blank"
             >
               <img
@@ -105,6 +106,9 @@ const Header = () => {
               ></img>
               <span>Upgrade</span>
             </Link>
+            <div className="mr-3">
+              <ThemeToggle />
+            </div>
             <div className="my-5 mr-5">
               <UserButton
                 appearance={{
@@ -119,8 +123,11 @@ const Header = () => {
             </div>
           </SignedIn>
           <SignedOut>
+            <div className="mr-3">
+              <ThemeToggle />
+            </div>
             <div className="my-5 mr-5">
-              <SignIn className="inline-block min-w-24 rounded border-1 border-transparent bg-[#1a73e8] py-[9px] text-center text-sm leading-4 font-medium text-white hover:bg-[#1b66c9]" />
+              <SignIn className="inline-block min-w-24 rounded border-1 border-transparent bg-blue-600 dark:bg-blue-700 py-[9px] text-center text-sm leading-4 font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-800" />
             </div>
           </SignedOut>
         </div>
