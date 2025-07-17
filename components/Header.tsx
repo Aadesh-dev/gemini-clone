@@ -1,17 +1,17 @@
 "use client";
 
-import ModelsDialog from "@/components/ModelsDialog";
 import SignIn from "@/components/SignIn";
 import { ChatsContext } from "@/lib/contexts";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState } from "react";
-import DeleteDialog from "./DeleteDialog";
+import DeleteDialog from "./dialogs/DeleteDialog";
 import PlusIcon from "./icons/PlusIcon";
 import OptionsDrawer from "./OptionsDrawer";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import ModelsDrawer from "./ModelsDrawer";
+import ModelsDialog from "./dialogs/ModelsDialog";
 
 const Header = () => {
   //State

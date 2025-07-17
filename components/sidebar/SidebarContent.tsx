@@ -6,8 +6,10 @@ import { ChatType } from "@/app/types";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import DownArrowIcon from "../icons/DownArrowIcon";
 import SignIn from "../SignIn";
-import OptionsDialog from "../OptionsDialog";
 import Link from "next/link";
+import SettingsIcon from "../icons/SettingsIcon";
+import OptionsDialog from "../dialogs/OptionsDialog";
+import SettingsDialog from "../dialogs/SettingsDialog";
 
 const SidebarContent = ({
   userId,
@@ -50,7 +52,7 @@ const SidebarContent = ({
     currentChat && currentChat.messages.length ? true : false;
   const finalExpanded = fromDesktop ? expanded || hovered : expanded;
 
-  const newChatButtonClass = `rounded-[20px] hover:bg-[rgba(87,91,95,0.08)] flex items-center h-12 md:h-10 transition-all duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
+  const newChatButtonClass = `rounded-[20px] hover:bg-[rgba(87,91,95,0.08)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
     finalExpanded
       ? "w-[calc(100%-24px)] mx-1 md:mx-3"
       : "w-10 rounded-full mx-4 justify-center px-2"
@@ -64,7 +66,7 @@ const SidebarContent = ({
 
   const chatContainerClass = `${
     finalExpanded ? "visible opacity-100" : "invisible opacity-0"
-  } ${userId ? "px-2 md:px-3 h-[calc(100vh-188px)] md:h-[calc(100vh-140px)]" : "px-5 md:px-4 h-[calc(100vh-140px)]"} pb-2 md:mt-4 transition-opacity duration-1000 ease-in overflow-y-scroll`;
+  } ${userId ? "px-2 md:px-3 h-[calc(100vh-280px)] md:h-[calc(100vh-232px)]" : "px-5 md:px-4 h-[calc(100vh-232px)]"} pb-2 md:mt-4 transition-opacity duration-1000 ease-in overflow-y-scroll`;
 
   const newChat = () => {
     router.push("/app/");
@@ -201,6 +203,7 @@ const SidebarContent = ({
               </>
             )}
           </div>
+          <SettingsDialog finalExpanded={finalExpanded} />
           <SignedIn>
             <div className="mb-3 pr-3 pl-[10px] md:hidden">
               <Link

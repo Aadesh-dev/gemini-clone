@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import DeleteIcon from "./icons/DeleteIcon";
-import OptionsIcon from "./icons/OptionsIcon";
+import OptionsIcon from "../icons/OptionsIcon";
+import DeleteIcon from "../icons/DeleteIcon";
 
 const OptionsDialog = ({
   currentChat,

@@ -13,7 +13,7 @@ import { handleError } from "@/lib/utils";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import DeleteNotification from "./DeleteNotification";
+import DeleteNotification from "../DeleteNotification";
 
 const DeleteDialog = ({
   currentChat,
@@ -73,7 +73,7 @@ const DeleteDialog = ({
         showBackdrop
         className="top-[50%] left-[50%] w-150 max-w-150 translate-x-[-50%] translate-y-[-50%] gap-0 border-none bg-[#f0f4f9] p-0 text-[14px] sm:rounded-[28px]"
       >
-        <DialogTitle className="sr-only">Chat `options</DialogTitle>
+        <DialogTitle className="sr-only">Delete chat?</DialogTitle>
         <DialogHeader className="px-6 pt-6 pb-[13px]">
           <h1 className="text-[24px] leading-8 text-[#1b1c1d]">Delete chat?</h1>
         </DialogHeader>

@@ -10,7 +10,7 @@ import {
 import { UserContext } from "@/lib/contexts";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
-import CheckmarkIcon from "./icons/CheckmarkIcon";
+import CheckmarkIcon from "../icons/CheckmarkIcon";
 
 const ModelsDialog = ({
   isOpen,

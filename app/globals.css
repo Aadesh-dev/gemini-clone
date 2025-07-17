@@ -1,11 +1,17 @@
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
 @import "tailwindcss";
-
 @plugin "tailwindcss-animate";
+
+@variant dark (&:where([class="dark"], [class="dark"] *));
 
 @theme {
   --breakpoint-md: 60rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 /* Pseudo-classes */

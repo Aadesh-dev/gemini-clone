@@ -7,7 +7,7 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import DeleteDialog from "../DeleteDialog";
+import DeleteDialog from "../dialogs/DeleteDialog";
 import HamburgerIcon from "../icons/HamburgerIcon";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileSidebar from "./MobileSidebar";
