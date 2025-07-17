@@ -3,8 +3,21 @@
 
 @variant dark (&:where([class="dark"], [class="dark"] *));
 
-@theme {
-  --breakpoint-md: 60rem;
+@layer theme {
+  :root {
+    --color-gemini-background: #f0f4f9;
+    --color-gemini-card: #ffffff;
+    --color-gemini-text: #1f1f1f;
+    --color-gemini-text-secondary: #444746;
+    --color-gemini-accent: #4285f4;
+  }
+  .dark {
+    --color-gemini-background: #1e1f20;
+    --color-gemini-card: #232428;
+    --color-gemini-text: #e3e3e5;
+    --color-gemini-text-secondary: #8e8f91;
+    --color-gemini-accent: #8ab4f8;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,16 +35,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#dde3ea] rounded-[9999px];
+  @apply rounded-[9999px];
+  background: var(--color-gemini-background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[rgb(196,199,197)];
+  background: var(--color-gemini-card);
 }
 
 /* Element selectors */
 body {
-  @apply text-[rgb(var(--text))];
+  background: var(--color-gemini-background);
+  color: var(--color-gemini-text);
 }
 
 ul, ol {
@@ -44,11 +59,12 @@ ul, ol {
 }
 
 .text {
-  @apply text-[#1b1c1d];
+  color: var(--color-gemini-text);
 }
 
 .Toastify__toast {
-  @apply py-[14px] pl-4 pr-2 bg-[#303030] min-h-0;
+  @apply py-[14px] pl-4 pr-2 min-h-0;
+  background: #303030;
 }
 
 .Toastify__close-button {
