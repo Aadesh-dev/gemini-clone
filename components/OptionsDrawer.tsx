@@ -13,11 +13,16 @@ const OptionsDrawer = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger>
-        <OptionsIcon width="29px" height="29px" fontSize={29} fill="#5F6368" />
+        <OptionsIcon
+          width="29px"
+          height="29px"
+          fontSize={29}
+          fill="var(--color-header-options-icon)"
+        />
       </DrawerTrigger>
-      <DrawerContent className="h-49 bg-[#f0f4f9] pt-3 pb-6">
+      <DrawerContent className="h-49 bg-[var(--color-options-drawer-background)] pt-3 pb-6">
         <button
-          className="flex h-12 w-full cursor-pointer items-center pl-4 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]"
+          className="flex h-12 w-full cursor-pointer items-center pl-4 text-[var(--color-text-secondary)]"
           onClick={() => {
             setIsDeleteDialogOpen(true);
             setIsOpen(false);

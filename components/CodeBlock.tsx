@@ -1,9 +1,9 @@
-import { useState, ReactNode, HTMLAttributes } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { Source_Code_Pro } from "next/font/google";
-import CopyIcon from "./icons/CopyIcon";
+import { HTMLAttributes, ReactNode } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { toast } from "react-toastify";
 import CopiedNotification from "./CopiedNotification";
+import CopyIcon from "./icons/CopyIcon";
 
 const code = Source_Code_Pro({
   weight: ["400", "600"],
@@ -34,7 +34,7 @@ const CodeBlock = ({ className, children }: CodeBlockProps) => {
     return (
       <code
         className={
-          "relative rounded-[6px] bg-[#f0f4f9] px-[6px] py-[1px] text-[14px] " +
+          "relative rounded-[6px] bg-[var(--color-modal-upgrade-button-background)] px-[6px] py-[1px] text-[14px] text-[var(--color-code-chips)] " +
           code.className
         }
       >
@@ -47,7 +47,7 @@ const CodeBlock = ({ className, children }: CodeBlockProps) => {
     <div className="relative">
       <button
         onClick={handleCopy}
-        className="absolute top-3 right-3 flex cursor-pointer items-center rounded-full p-1 hover:bg-[rgba(87,91,95,0.08)]"
+        className="absolute top-3 right-3 flex cursor-pointer items-center rounded-full p-1 hover:bg-[rgba(87,91,95,0.08)] dark:hover:bg-[#3d3f42]"
       >
         <CopyIcon />
       </button>
@@ -55,14 +55,17 @@ const CodeBlock = ({ className, children }: CodeBlockProps) => {
       <SyntaxHighlighter
         language={language}
         customStyle={{
-          backgroundColor: "#f0f4f9",
+          backgroundColor: "var(--color-sidebar-background)",
           borderRadius: 16,
           fontSize: 14,
           padding: 16,
           marginTop: 16,
           marginBottom: 16,
         }}
-        codeTagProps={{ className: code.className }}
+        codeTagProps={{
+          className: code.className,
+          style: { whiteSpace: "break-spaces" },
+        }}
       >
         {codeToRender}
       </SyntaxHighlighter>

@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -20,8 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider afterSignOutUrl="/logout">
-      <html lang="en">
-        <body className={roboto.className}>{children}</body>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${roboto.className} bg-[var(--color-main-background)] text-[var(--color-text-primary)]`}
+        >
+          <ThemeProvider attribute="class">{children}</ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

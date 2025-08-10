@@ -1,17 +1,17 @@
 "use client";
 
-import ModelsDialog from "@/components/ModelsDialog";
 import SignIn from "@/components/SignIn";
 import { ChatsContext } from "@/lib/contexts";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState } from "react";
-import DeleteDialog from "./DeleteDialog";
+import DeleteDialog from "./dialogs/DeleteDialog";
 import PlusIcon from "./icons/PlusIcon";
 import OptionsDrawer from "./OptionsDrawer";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import ModelsDrawer from "./ModelsDrawer";
+import ModelsDialog from "./dialogs/ModelsDialog";
 
 const Header = () => {
   //State
@@ -52,17 +52,17 @@ const Header = () => {
               setIsModelsDialogOpen(true);
             }}
           >
-            <span className="text-left text-[20px] leading-7 text-[#1B1C1D]">
+            <span className="text-left text-[20px] leading-7 text-[var(--color-text-primary)]">
               Gemini
             </span>
-            <div className="flex rounded-2xl bg-[#f0f4f9] pr-1 pl-3 text-[#575b5f] hover:bg-[#dde3ea]">
+            <div className="flex rounded-2xl bg-[var(--color-sidebar-background)] pr-1 pl-3 text-[var(--color-text-primary)] hover:bg-[var(--color-upgrade-button-background)]">
               <span className="text-[14px] font-medium">2.5 Flash</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height={24}
                 viewBox="0 -960 960 960"
                 width={24}
-                fill="#575b5f"
+                fill="var(--color-text-primary)"
               >
                 <path d="M480-360 280-560h400L480-360Z" />
               </svg>
@@ -74,13 +74,13 @@ const Header = () => {
             {areMessagesInChat && (
               <button
                 onClick={newChat}
-                className="mr-2 cursor-pointer rounded-[50%] bg-[#e9eef6] p-2 md:hidden"
+                className="mr-2 cursor-pointer rounded-[50%] bg-[var(--color-modal-upgrade-button-background)] p-2 md:hidden"
               >
                 <PlusIcon />
               </button>
             )}
             <a
-              className="mt-[14px] mr-[22px] text-[14px] leading-5 font-medium text-[#575b5f] max-md:hidden"
+              className="mr-[22px] text-[14px] leading-5 font-medium text-[var(--color-text-primary)] max-md:hidden"
               href="https://gemini.google/about/"
               target="_blank"
             >
@@ -95,13 +95,13 @@ const Header = () => {
             )}
             <Link
               href="https://one.google.com/explore-plan/gemini-advanced"
-              className="mt-3 mr-5 hidden h-9 items-center justify-center gap-2 self-start rounded-[8px] bg-[#dde3ea] px-6 text-xs font-medium text-[#1b1c1d] md:flex"
+              className="mr-5 mb-[5px] hidden h-9 items-center justify-center gap-2 rounded-[8px] bg-[var(--color-upgrade-button-background)] px-6 text-xs font-medium text-[var(--color-text-tertiary)] hover:bg-[var(--color-upgrade-button-hover-background)] md:flex"
               target="_blank"
             >
               <img
                 width={16}
                 height={16}
-                src="https://www.gstatic.com/lamda/images/gemini_sparkle_red_4ed1cbfcbc6c9e84c31b987da73fc4168aec8445.svg"
+                src="https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg"
               ></img>
               <span>Upgrade</span>
             </Link>
@@ -120,7 +120,7 @@ const Header = () => {
           </SignedIn>
           <SignedOut>
             <div className="my-5 mr-5">
-              <SignIn className="inline-block min-w-24 rounded border-1 border-transparent bg-[#1a73e8] py-[9px] text-center text-sm leading-4 font-medium text-white hover:bg-[#1b66c9]" />
+              <SignIn className="inline-block min-w-24 rounded border-1 border-transparent bg-[var(--color-signin-button-background)] py-[9px] text-center text-sm leading-4 font-medium text-[var(--color-signin-button-text)] hover:bg-[var(--color-signin-button-hover-background)]" />
             </div>
           </SignedOut>
         </div>
