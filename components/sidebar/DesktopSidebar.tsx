@@ -27,8 +27,8 @@ const DesktopSidebar = ({
     <div
       className={
         expanded || hovered
-          ? "transition-width hidden w-[272px] shrink-0 overflow-hidden bg-[#f0f4f9] md:block"
-          : "transition-width hidden w-[72px] shrink-0 overflow-hidden bg-[#f0f4f9] md:block"
+          ? "transition-width hidden w-[272px] shrink-0 overflow-hidden bg-[var(--color-sidebar-background)] md:block"
+          : "transition-width hidden w-[72px] shrink-0 overflow-hidden bg-[var(--color-sidebar-background)] md:block"
       }
       onMouseEnter={() => {
         timerRef.current = setTimeout(() => {
@@ -53,7 +53,7 @@ const DesktopSidebar = ({
               }, 200);
             }
           }}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full p-2 hover:bg-[var(--color-chat-hover-background)]"
         >
           <HamburgerIcon />
         </button>

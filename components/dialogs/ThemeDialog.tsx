@@ -22,10 +22,10 @@ const ThemeDialog = ({
   };
 
   const dialogContentClass =
-    "left-[430px] top-auto bottom-[36px] w-[232px] gap-0 bg-[#f0f4f9] px-0 py-2 text-[14px] shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none";
+    "left-[430px] top-auto bottom-[36px] w-[232px] gap-0 bg-[var(--color-dialog-background)] px-0 py-2 text-[14px] shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none";
 
   const themeOptionClass =
-    "h-12 cursor-pointer px-3 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]";
+    "h-12 cursor-pointer px-3 text-[var(--color-text-secondary)] hover:bg-[var(--color-dialog-items-hover-background)]";
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal={false}>

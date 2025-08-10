@@ -28,7 +28,7 @@ const ModelsDialog = ({
 
   const { user } = userContext;
 
-  const dialogContentClass = `${user && user.sidebarExpanded ? "left-[22%]" : "left-[6%]"} top-[12.5%] w-80 gap-0 bg-[#f0f4f9] px-0 py-5 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none`;
+  const dialogContentClass = `${user && user.sidebarExpanded ? "left-[22%]" : "left-[6%]"} top-[12.5%] w-80 gap-0 bg-[var(--color-sidebar-background)] px-0 py-5 shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none`;
 
   const onModelClick = () => {
     router.push("/app/");
@@ -42,11 +42,11 @@ const ModelsDialog = ({
         onClick={() => setIsOpen(false)}
       >
         <DialogTitle className="sr-only">Change Gemini model</DialogTitle>
-        <DialogHeader className="px-5 pb-2 text-[14px] leading-5 font-medium text-[#727676]">
+        <DialogHeader className="px-5 pb-2 text-[14px] leading-5 font-medium text-[var(--color-model-selection-title-text)]">
           Choose your model
         </DialogHeader>
         <button
-          className="h-12 cursor-pointer items-center pr-4 pl-5 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]"
+          className="h-12 cursor-pointer items-center pr-4 pl-5 text-[var(--color-text-secondary)] hover:bg-[var(--color-upgrade-button-background)]"
           onClick={onModelClick}
         >
           <div className="flex w-full items-center justify-between">
@@ -69,7 +69,7 @@ const ModelsDialog = ({
                 "_blank",
               )
             }
-            className="h-10 cursor-pointer rounded-full bg-[#e9eef6] px-6 text-[14px] font-medium text-[#0842A0] hover:bg-[rgba(100,149,237,0.2)] hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)]"
+            className="h-10 cursor-pointer rounded-full bg-[var(--color-modal-upgrade-button-background)] px-6 text-[14px] font-medium text-[var(--color-modal-upgrade-button-text)] hover:bg-[rgba(100,149,237,0.2)] hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)]"
           >
             Upgrade
           </button>

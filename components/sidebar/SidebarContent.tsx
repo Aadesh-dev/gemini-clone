@@ -1,15 +1,14 @@
-import React, { useContext, useState } from "react";
-import NewChatIcon from "../icons/NewChatIcon";
-import { usePathname, useRouter } from "next/navigation";
-import { ChatsContext } from "@/lib/contexts";
 import { ChatType } from "@/app/types";
+import { ChatsContext } from "@/lib/contexts";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import DownArrowIcon from "../icons/DownArrowIcon";
-import SignIn from "../SignIn";
 import Link from "next/link";
-import SettingsIcon from "../icons/SettingsIcon";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
 import OptionsDialog from "../dialogs/OptionsDialog";
 import SettingsDialog from "../dialogs/SettingsDialog";
+import DownArrowIcon from "../icons/DownArrowIcon";
+import NewChatIcon from "../icons/NewChatIcon";
+import SignIn from "../SignIn";
 
 const SidebarContent = ({
   userId,
@@ -52,14 +51,16 @@ const SidebarContent = ({
     currentChat && currentChat.messages.length ? true : false;
   const finalExpanded = fromDesktop ? expanded || hovered : expanded;
 
-  const newChatButtonClass = `rounded-[20px] hover:bg-[rgba(87,91,95,0.08)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
+  const newChatButtonClass = `rounded-[20px] hover:bg-[var(--color-chat-hover-background)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
     finalExpanded
       ? "w-[calc(100%-24px)] mx-1 md:mx-3"
       : "w-10 rounded-full mx-4 justify-center px-2"
   }`;
 
   const newChatTextClass = `my-2 text-[14px] ${
-    areMessagesInChat ? "text-[#575b5f]" : "text-[rgba(27,28,29,0.38)]"
+    areMessagesInChat
+      ? "text-[var(--color-text-primary)]"
+      : "text-[var(--color-new-chat-icon)]"
   } transition-opacity duration-300 ease-in-out ${
     finalExpanded ? "opacity-100 block" : "opacity-0 hidden"
   }`;
@@ -81,7 +82,7 @@ const SidebarContent = ({
         <div
           key={start + index}
           id={chat._id}
-          className="relative text-[14px] text-[#575B5F]"
+          className="relative text-[14px] text-[var(--color-text-primary)]"
         >
           <button
             onClick={() => {
@@ -96,8 +97,8 @@ const SidebarContent = ({
             }}
             className={
               currentChat && chat._id === currentChat._id
-                ? "flex h-12 w-full cursor-pointer items-center rounded-[30px] bg-[#d3e3fd] px-3 py-2 text-left font-medium text-[#0842a0] md:h-auto"
-                : "flex h-12 w-full cursor-pointer items-center rounded-[30px] px-3 py-2 text-left hover:bg-[rgba(87,91,95,.08)] md:h-auto"
+                ? "flex h-12 w-full cursor-pointer items-center rounded-[30px] bg-[var(--color-selected-chat-background)] px-3 py-2 text-left font-medium text-[var(--color-modal-upgrade-button-text)] md:h-auto"
+                : "flex h-12 w-full cursor-pointer items-center rounded-[30px] px-3 py-2 text-left hover:bg-[var(--color-chat-hover-background)] md:h-auto"
             }
           >
             <p className="flex-1 basis-0 overflow-hidden leading-5 overflow-ellipsis whitespace-nowrap">
@@ -135,7 +136,11 @@ const SidebarContent = ({
       >
         <span className={finalExpanded ? "mr-4 ml-[14px]" : ""}>
           <NewChatIcon
-            fill={areMessagesInChat ? "#575B5F" : "rgba(31, 31, 31, 0.38)"}
+            fill={
+              areMessagesInChat
+                ? "var(--color-text-primary)"
+                : "var(--color-new-chat-icon)"
+            }
           />
         </span>
         <span className={newChatTextClass}>New chat</span>
@@ -146,22 +151,18 @@ const SidebarContent = ({
             <div
               className={userId ? "py-1 pl-3 md:py-2" : "pt-2 pb-[9px] md:pl-3"}
             >
-              {chats.filter((chat) => chat.title !== "New Chat").length ? (
-                <h1
-                  className={
-                    userId
-                      ? "text-[14px] font-medium text-[#727676]"
-                      : "text-[14px] font-medium text-[#444746] md:text-[#1b1c1d]"
-                  }
-                >
-                  Recent
-                </h1>
-              ) : (
-                <></>
-              )}
+              <h1
+                className={
+                  userId
+                    ? "text-[14px] font-medium text-[var(--color-model-selection-title-text)]"
+                    : "text-[14px] font-medium text-[var(--color-copy-icon)] md:text-[var(--color-text-tertiary)]"
+                }
+              >
+                Recent
+              </h1>
             </div>
             <SignedOut>
-              <div className="mb-3 flex flex-col rounded-2xl bg-[#dde3ea] px-5 py-4 text-[#444746] md:max-w-sm md:text-[#1b1c1d]">
+              <div className="mb-3 flex flex-col rounded-2xl bg-[var(--color-upgrade-button-background)] px-5 py-4 text-[var(--color-copy-icon)] md:max-w-sm md:text-[var(--color-text-tertiary)]">
                 <p className="mb-1 text-sm font-medium">
                   Sign in to start saving your chats
                 </p>
@@ -169,11 +170,11 @@ const SidebarContent = ({
                   The chats that you see here are temporary, and will not be
                   saved unless you sign in.
                 </p>
-                <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[#0b57d0] hover:bg-[rgba(105,145,214,0.2)]" />
+                <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)]" />
               </div>
               {!areMessagesInChat && (
                 <a
-                  className="mt-3 ml-[18px] inline-block text-[14px] leading-5 font-medium text-[#575b5f] md:hidden"
+                  className="mt-3 ml-[18px] inline-block text-[14px] leading-5 font-medium text-[var(--color-text-primary)] md:hidden"
                   href="https://gemini.google/about/"
                   target="_blank"
                 >
@@ -203,25 +204,25 @@ const SidebarContent = ({
               </>
             )}
           </div>
-          <SettingsDialog finalExpanded={finalExpanded} />
-          <SignedIn>
-            <div className="mb-3 pr-3 pl-[10px] md:hidden">
-              <Link
-                href="https://one.google.com/explore-plan/gemini-advanced"
-                className="flex h-9 w-fit items-center justify-center gap-2 rounded-[8px] bg-[#dde3ea] px-6 text-xs font-medium text-[#1b1c1d]"
-                target="_blank"
-              >
-                <img
-                  width={16}
-                  height={16}
-                  src="https://www.gstatic.com/lamda/images/gemini_sparkle_red_4ed1cbfcbc6c9e84c31b987da73fc4168aec8445.svg"
-                ></img>
-                <span>Upgrade</span>
-              </Link>
-            </div>
-          </SignedIn>
         </>
       )}
+      <SettingsDialog finalExpanded={finalExpanded} />
+      <SignedIn>
+        <div className="mb-3 pr-[18px] pl-5 md:hidden">
+          <Link
+            href="https://one.google.com/explore-plan/gemini-advanced"
+            className="flex h-9 w-fit items-center justify-center gap-2 rounded-[8px] bg-[var(--color-upgrade-button-background)] px-6 text-xs font-medium text-[var(--color-text-tertiary)]"
+            target="_blank"
+          >
+            <img
+              width={16}
+              height={16}
+              src="https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg"
+            ></img>
+            <span>Upgrade</span>
+          </Link>
+        </div>
+      </SignedIn>
     </div>
   );
 };

@@ -13,33 +13,39 @@ import ThemeIcon from "../icons/ThemeIcon";
 import ThemeDialog from "./ThemeDialog";
 import HelpDialog from "./HelpDialog";
 
-const SettingsDialog = ({ finalExpanded }: { finalExpanded: true }) => {
+const SettingsDialog = ({ finalExpanded }: { finalExpanded: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
 
   const dialogContentClass =
-    "left-[133px] top-auto bottom-[36px] w-[300px] gap-0 bg-[#f0f4f9] px-0 py-2 text-[14px] shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none";
+    "left-[133px] top-auto bottom-[36px] w-[300px] gap-0 bg-[var(--color-dialog-background)] px-0 py-2 text-[14px] shadow-[0px_3px_1px_-2px_rgba(0,0,0,0.2),0px_2px_2px_0px_rgba(0,0,0,0.14),0px_1px_5px_0px_rgba(0,0,0,0.12)] border-none";
 
-  const settingsButtonClass = `rounded-[20px] mt-6 mb-7 hover:bg-[rgba(87,91,95,0.08)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
+  const settingsButtonClass = `rounded-[20px] hover:bg-[var(--color-chat-hover-background)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
     finalExpanded
       ? "w-[calc(100%-24px)] mx-1 md:mx-3"
-      : "w-10 rounded-full mx-4 justify-center px-2"
-  } ${isOpen ? "bg-[#d3e3fd]" : ""}`;
+      : "w-10 rounded-full mx-4 justify-center px-2 absolute bottom-7"
+  } ${isOpen ? "bg-[var(--color-selected-chat-background)]" : ""}`;
 
   const settingsTextClass = `my-2 text-[14px] transition-opacity duration-300 ease-in-out ${
     finalExpanded ? "opacity-100 block" : "opacity-0 hidden"
-  } ${isOpen ? "text-[#0842a0] font-medium" : "text-[#575b5f]"}`;
+  } ${isOpen ? "text-[var(--color-modal-upgrade-button-text)] font-medium" : "text-[var(--color-text-primary)]"}`;
 
   const settingsOptionClass =
-    "h-12 cursor-pointer pr-6 pl-3 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]";
+    "h-12 cursor-pointer pr-6 pl-3 text-[var(--color-text-secondary)] hover:bg-[var(--color-dialog-items-hover-background)]";
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger className={settingsButtonClass}>
           <span className={finalExpanded ? "mr-4 ml-[14px]" : ""}>
-            <SettingsIcon fill={isOpen ? "#0842a0" : "#575B5F"} />
+            <SettingsIcon
+              fill={
+                isOpen
+                  ? "var(--color-modal-upgrade-button-text)"
+                  : "var(--color-text-primary)"
+              }
+            />
           </span>
           <span className={settingsTextClass}>Settings & help</span>
         </DialogTrigger>

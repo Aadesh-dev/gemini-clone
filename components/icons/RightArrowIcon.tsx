@@ -7,7 +7,7 @@ const RightArrowIcon = () => {
       height="24px"
       viewBox="0 -960 960 960"
       width="24px"
-      fill="#444746"
+      fill="var(--color-copy-icon)"
     >
       <path d="M384-288v-384l192 192-192 192Z" />
     </svg>

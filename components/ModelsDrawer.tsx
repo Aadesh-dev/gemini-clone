@@ -25,13 +25,13 @@ const ModelsDrawer = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger></DrawerTrigger>
-      <DrawerContent className="h-49 bg-[#f0f4f9] pt-4 pb-7">
+      <DrawerContent className="h-49 bg-[var(--color-options-drawer-background)] pt-4 pb-7">
         <DrawerTitle className="sr-only">Change Gemini model</DrawerTitle>
-        <DrawerHeader className="px-5 pt-0 pb-2 text-left text-[14px] leading-5 font-medium text-[#727676]">
+        <DrawerHeader className="px-5 pt-0 pb-2 text-left text-[14px] leading-5 font-medium text-[var(--color-model-selection-title-text)]">
           Choose your model
         </DrawerHeader>
         <button
-          className="h-12 cursor-pointer items-center pr-4 pl-5 text-[#1f1f1f] hover:bg-[rgba(31,31,31,0.08)]"
+          className="h-12 cursor-pointer items-center pr-4 pl-5 text-[var(--color-text-secondary)]"
           onClick={onModelClick}
         >
           <div className="flex w-full items-center justify-between">
@@ -54,7 +54,7 @@ const ModelsDrawer = ({
                 "_blank",
               )
             }
-            className="h-10 cursor-pointer rounded-full bg-[#e9eef6] px-6 text-[14px] text-[#0842A0] hover:bg-[rgba(100,149,237,0.2)] hover:shadow-[0_2px_1px_-1px_rgba(0,0,0,.2),0_1px_1px_0_rgba(0,0,0,.14),0_1px_3px_0_rgba(0,0,0,.12)]"
+            className="h-10 cursor-pointer rounded-full bg-[var(--color-modal-upgrade-button-background)] px-6 text-[14px] text-[var(--color-modal-upgrade-button-text)]"
           >
             Upgrade
           </button>

@@ -7,10 +7,66 @@
   --breakpoint-md: 60rem;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer theme {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-main-background: #ffffff;
+    --color-sidebar-background: #f0f4f9;
+    --color-dialog-background: #f0f4f9;
+    --color-delete-dialog-background: #f0f4f9;
+    --color-text-primary: #575b5f;
+    --color-text-secondary: #1f1f1f;
+    --color-text-tertiary: #1b1c1d;
+    --color-upgrade-button-background: #dde3ea;
+    --color-model-selection-title-text: #727676;
+    --color-modal-upgrade-button-background: #e9eef6;
+    --color-modal-upgrade-button-text: #0842a0;
+    --color-signin-button-background: #1a73e8;
+    --color-signin-button-text: #ffffff;
+    --color-signin-button-hover-background: #1b66c9;
+    --color-input-border: #c4c7c5;
+    --color-input-placeholder: #5f6368;
+    --color-table-background: #f8fafd;
+    --color-copy-icon: #444746;
+    --color-code-chips: #1b1c1d;
+    --color-stop-button: #0b57d0;
+    --color-new-chat-icon: rgba(31,31,31,0.38);
+    --color-chat-hover-background: rgba(87,91,95,.08);
+    --color-selected-chat-background: #d3e3fd;
+    --color-options-icon-hover-background: #ffffff;
+    --color-dialog-items-hover-background: rgba(31,31,31,0.08);
+    --color-upgrade-button-hover-background: #c7ccd3;
+    --color-header-options-icon: #5F6368;
+    --color-options-drawer-background: #f0f4f9;
+  }
+  .dark {
+    --color-main-background: #1b1c1d;
+    --color-sidebar-background: #282a2c;
+    --color-dialog-background: #1e1f20;
+    --color-delete-dialog-background: #1f1f1f;
+    --color-text-primary: #a2a9b0;
+    --color-text-secondary: #e3e3e3;
+    --color-text-tertiary: #ffffff;
+    --color-upgrade-button-background: #3d3f42;
+    --color-model-selection-title-text: #9a9b9c;
+    --color-modal-upgrade-button-background: #333537;
+    --color-modal-upgrade-button-text: #d3e3fd;
+    --color-signin-button-background: #8ab4f8;
+    --color-signin-button-text: #202124;
+    --color-signin-button-hover-background: #93baf9;
+    --color-input-border: #4a5050;
+    --color-input-placeholder: #bdc1c6;
+    --color-table-background: #262627;
+    --color-copy-icon: #c4c7c5;
+    --color-code-chips: #a2a9b0;
+    --color-stop-button: #A8C7FA;
+    --color-new-chat-icon: rgba(227,227,227,0.38);
+    --color-chat-hover-background: rgba(162,169,176,.08);
+    --color-selected-chat-background: #1f3760;
+    --color-options-icon-hover-background: #035;
+    --color-dialog-items-hover-background: rgba(227,227,227,0.08);
+    --color-upgrade-button-hover-background: #56585c;
+    --color-header-options-icon: rgba(255,255,255,0.87);
+    --color-options-drawer-background: #1b1b1b;
   }
 }
 
@@ -22,11 +78,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#dde3ea] rounded-[9999px];
+  @apply bg-[var(--color-upgrade-button-background)] rounded-[9999px];
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-[rgb(196,199,197)];
+  @apply bg-[var(--color-input-border)];
 }
 
 /* Element selectors */

@@ -71,19 +71,21 @@ const DeleteDialog = ({
       <DialogTrigger></DialogTrigger>
       <DialogContent
         showBackdrop
-        className="top-[50%] left-[50%] w-150 max-w-150 translate-x-[-50%] translate-y-[-50%] gap-0 border-none bg-[#f0f4f9] p-0 text-[14px] sm:rounded-[28px]"
+        className="top-[50%] left-[50%] w-150 max-w-150 translate-x-[-50%] translate-y-[-50%] gap-0 border-none bg-[var(--color-delete-dialog-background)] p-0 text-[14px] sm:rounded-[28px]"
       >
         <DialogTitle className="sr-only">Delete chat?</DialogTitle>
         <DialogHeader className="px-6 pt-6 pb-[13px]">
-          <h1 className="text-[24px] leading-8 text-[#1b1c1d]">Delete chat?</h1>
+          <h1 className="text-[24px] leading-8 text-[var(--color-text-tertiary)]">
+            Delete chat?
+          </h1>
         </DialogHeader>
         <div className="px-6">
-          <p className="my-[14px] leading-5 text-[#575b5f]">
+          <p className="my-[14px] leading-5 text-[var(--color-text-primary)]">
             This will delete prompts, responses, and any content you created.
           </p>
           <a
             href="https://support.google.com/gemini?p=deleted_chats"
-            className="leading-5 text-[#0b57d0] underline"
+            className="leading-5 text-[var(--color-stop-button)] underline"
             target="_blank"
           >
             Learn more
@@ -92,13 +94,13 @@ const DeleteDialog = ({
         <div className="flex justify-end p-6">
           <button
             onClick={() => setIsOpen(false)}
-            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[#0b57d0] hover:bg-[rgba(105,145,214,0.2)]"
+            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[rgba(105,145,214,0.2)]"
           >
             Cancel
           </button>
           <button
             onClick={onDelete}
-            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[#0b57d0] hover:bg-[rgba(105,145,214,0.2)]"
+            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[rgba(105,145,214,0.2)]"
           >
             Delete
           </button>

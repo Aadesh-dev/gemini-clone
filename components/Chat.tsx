@@ -65,6 +65,8 @@ const Chat = ({
   const { chats, setChats } = chatsContext;
   const { user, setUser } = userContext;
 
+  const inputWrapperClass = `relative flex w-full justify-center bg-[var(--color-main-background)] ${messages.length ? "before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,1)_50px)] before:content-[''] dark:before:bg-[linear-gradient(180deg,_rgba(27,28,29,0)_0px,_rgba(27,28,29,1)_50px)]" : ""}`;
+
   const handleIntroMessageClose = async () => {
     setShowIntroMessage(!showIntroMessage);
     if (user) {
@@ -112,21 +114,21 @@ const Chat = ({
   }, [user, chats]);
 
   return (
-    <div className="flex flex-col items-center justify-between px-4">
+    <div className="flex flex-col items-center justify-between">
       {messages.length ? (
         <div
-          className="w-full overflow-y-auto pt-4 pr-4 pb-5 pl-7"
+          className="w-full overflow-y-auto px-4 pt-4 pb-5"
           style={{
             height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
           }}
         >
-          <div className="mx-auto w-[760px] leading-7 text-[#1b1c1d]">
+          <div className="mx-auto max-w-[760px] leading-7 text-[var(--color-text-tertiary)]">
             {messages.map((m, index: number) => (
               <React.Fragment key={index}>
                 {m.role === "user" ? (
                   <div className="flex justify-end py-4 md:py-2">
                     <div className="ml-13 max-md:mt-3 md:pb-6">
-                      <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[#e9eef6] px-4 py-3">
+                      <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[var(--color-modal-upgrade-button-background)] px-4 py-3">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {fixBrokenMarkdownTables(m.content)}
                         </ReactMarkdown>
@@ -147,14 +149,16 @@ const Chat = ({
                         remarkPlugins={[remarkGfm]}
                         components={{
                           table: ({ children }) => (
-                            <div className="overflow-auto rounded-2xl bg-[#f8fafd]">
+                            <div className="overflow-auto rounded-2xl bg-[var(--color-table-background)]">
                               <table className="min-w-full table-auto border-collapse text-left text-sm">
                                 {children}
                               </table>
                             </div>
                           ),
                           thead: ({ children }) => (
-                            <thead className="bg-[#f8fafd]">{children}</thead>
+                            <thead className="bg-[var(--color-table-background)]">
+                              {children}
+                            </thead>
                           ),
                           th: ({ children }) => (
                             <th className="px-3 py-2 font-normal">
@@ -193,18 +197,14 @@ const Chat = ({
         >
           {userId && (
             <h1 className="relative bottom-[15%] mx-auto self-center text-center text-[32px] leading-10 font-medium select-none">
-              <span className="bg-[linear-gradient(74deg,_rgb(66,133,244)_0px,_rgb(155,114,203)_9%,_rgb(217,101,112)_20%,_rgb(217,101,112)_24%,_rgb(155,114,203)_35%,_rgb(66,133,244)_44%,_rgb(155,114,203)_50%,_rgb(217,101,112)_56%,_rgb(255,255,255)_75%,_rgb(255,255,255)_100%)] bg-[length:400%_100%] bg-clip-text text-transparent">
+              <span className="bg-[linear-gradient(90deg,_#3186ff_0px,_#346bf1_50%,_#4fa0ff_100%)] bg-[length:100%_200%] bg-clip-text text-transparent dark:bg-[linear-gradient(90deg,_#3983ff_16.7%,_#3e6af0_50%,_#579fff_83.3%)]">
                 Hello, {user?.firstName}
               </span>
             </h1>
           )}
           <SignedOut>
             <h1 className="relative bottom-[15%] mx-auto w-[725px] self-center text-center text-[36px] leading-13 font-medium select-none md:text-[45px]">
-              <span>Meet&nbsp;</span>
-              <span className="bg-[linear-gradient(26.72deg,_#4285f4_55.92%,_#9b72cb_64.05%,_#d96570_70.93%)] bg-[length:100%_200%] bg-clip-text text-transparent">
-                Gemini
-              </span>
-              <span>,</span>
+              <span>Meet Gemini,</span>
               <br />
               <span>your personal AI assistant</span>
             </h1>
@@ -213,7 +213,7 @@ const Chat = ({
       )}
       <div className="absolute bottom-0 w-full px-4">
         {showIntroMessage && (
-          <div className="mx-auto mb-4 w-[760px] max-w-full rounded-2xl bg-[#f0f4f9] px-6 py-5 text-[#1b1c1d]">
+          <div className="mx-auto mb-4 w-[760px] max-w-full rounded-2xl bg-[var(--color-sidebar-background)] px-6 py-5 text-[var(--color-text-tertiary)]">
             <div className="mt-1 mb-3 flex w-full items-center justify-between">
               <p className="text-xl font-medium">
                 Welcome to{" "}
@@ -223,7 +223,7 @@ const Chat = ({
                 , your personal AI assistant
               </p>
               <button
-                className="cursor-pointer rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)]"
+                className="cursor-pointer rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)] dark:hover:bg-[#3d3f42]"
                 onClick={handleIntroMessageClose}
               >
                 <CloseIcon />
@@ -233,7 +233,7 @@ const Chat = ({
               <a
                 href="https://policies.google.com/terms"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-[var(--color-stop-button)] underline"
               >
                 Google Terms
               </a>{" "}
@@ -241,7 +241,7 @@ const Chat = ({
               <a
                 href="https://support.google.com/bard/answer/13594961"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-[var(--color-stop-button)] underline"
               >
                 Gemini Apps Privacy Notice
               </a>{" "}
@@ -249,7 +249,7 @@ const Chat = ({
               <a
                 href="https://myactivity.google.com/product/gemini?utm_source=gemini"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-[var(--color-stop-button)] underline"
               >
                 Learn about your choices
               </a>
@@ -257,7 +257,7 @@ const Chat = ({
               <a
                 href="https://support.google.com/gemini/answer/13594961#location&zippy=%2Cwhat-location-information-do-gemini-apps-collect-why-and-how-is-it-used"
                 target="_blank"
-                className="leading-4 text-[#0b57d0] underline"
+                className="leading-4 text-[var(--color-stop-button)] underline"
               >
                 about your location
               </a>{" "}
@@ -265,7 +265,7 @@ const Chat = ({
             </p>
           </div>
         )}
-        <div className="relative flex w-full justify-center bg-white before:absolute before:top-[-50px] before:bottom-0 before:z-0 before:h-[100px] before:w-full before:bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0px,_rgba(255,255,255,100)_60%)] before:content-['']">
+        <div className={inputWrapperClass}>
           <div className="z-[1] w-[760px]">
             <Input
               chatID={chatID}
@@ -279,7 +279,7 @@ const Chat = ({
               status={status}
               stop={stop}
             />
-            <p className="my-4 h-4 text-center text-xs leading-4 text-[#575b5f]">
+            <p className="my-4 h-4 text-center text-xs leading-4 text-[var(--color-text-primary)]">
               {messages.length ? (
                 "Gemini can make mistakes, so double-check it"
               ) : (

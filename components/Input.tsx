@@ -144,7 +144,7 @@ const Input = ({
 
   return (
     <div
-      className="max-h-[204px] w-full border border-solid border-[#c4c7c5] transition-[border-radius,height] duration-[100ms,250ms] ease-[cubic-bezier(.2,0,0,1),cubic-bezier(.2,0,0,1)]"
+      className="max-h-[204px] w-full border border-solid border-[var(--color-input-border)] transition-[border-radius,height] duration-[100ms,250ms] ease-[cubic-bezier(.2,0,0,1),cubic-bezier(.2,0,0,1)]"
       style={{ borderRadius: height <= 24 ? 32 : 16, height: 36 + height }}
     >
       <form className="flex p-2 pl-4" onSubmit={onPromptSubmit}>
@@ -154,21 +154,21 @@ const Input = ({
           rows={1}
           placeholder="Ask Gemini"
           className={
-            "my-[9px] max-h-[168px] flex-1 resize-none overflow-auto bg-transparent pr-[15px] text-[#1b1c1d] placeholder-[#5f6368] outline-none"
+            "my-[9px] max-h-[168px] flex-1 resize-none overflow-auto bg-transparent pr-[15px] text-[var(--color-text-tertiary)] placeholder-[var(--color-input-placeholder)] outline-none"
           }
           onChange={onPromptChange}
           onKeyDown={handleKeyDown}
         />
         {status === "submitted" || status === "streaming" ? (
           <button
-            className="ml-2 h-fit cursor-pointer self-end rounded-[50%] bg-[rgba(11,87,208,0.08)] p-[9px]"
+            className="ml-2 h-fit cursor-pointer self-end rounded-[50%] bg-[var(--color-sidebar-background)] p-[9px]"
             onClick={() => stop()}
           >
             <StopIcon />
           </button>
         ) : (
           <button
-            className={`ml-2 h-fit cursor-pointer rounded-[50%] bg-[#f0f4f9] p-[9px] hover:bg-[#dde3ea] ${
+            className={`ml-2 h-fit cursor-pointer rounded-[50%] bg-[var(--color-sidebar-background)] p-[9px] hover:bg-[var(--color-upgrade-button-background)] ${
               input
                 ? "pointer-events-auto visible scale-100 opacity-100 transition-all duration-500"
                 : "pointer-events-none invisible scale-75 opacity-0 transition-none"

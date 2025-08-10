@@ -22,7 +22,9 @@ export default function RootLayout({
   return (
     <ClerkProvider afterSignOutUrl="/logout">
       <html lang="en" suppressHydrationWarning>
-        <body className={roboto.className}>
+        <body
+          className={`${roboto.className} bg-[var(--color-main-background)] text-[var(--color-text-primary)]`}
+        >
           <ThemeProvider attribute="class">{children}</ThemeProvider>
         </body>
       </html>

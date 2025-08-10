@@ -28,7 +28,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
     <Gemini currentUser={user}>
       <main className="flex min-h-screen flex-row">
         <SidebarContainer userId={userId} />
-        <div className="relative flex flex-1 flex-col bg-white">
+        <div className="relative flex flex-1 flex-col">
           <Header />
           {children}
         </div>
