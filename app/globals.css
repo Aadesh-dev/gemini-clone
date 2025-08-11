@@ -37,6 +37,7 @@
     --color-upgrade-button-hover-background: #c7ccd3;
     --color-header-options-icon: #5F6368;
     --color-options-drawer-background: #f0f4f9;
+    --color-delete-button-hover-background: rgba(105,145,214,0.2);
   }
   .dark {
     --color-main-background: #1b1c1d;
@@ -67,6 +68,7 @@
     --color-upgrade-button-hover-background: #56585c;
     --color-header-options-icon: rgba(255,255,255,0.87);
     --color-options-drawer-background: #1b1b1b;
+    --color-delete-button-hover-background: rgba(168,199,250,0.12);
   }
 }
 

@@ -94,13 +94,13 @@ const DeleteDialog = ({
         <div className="flex justify-end p-6">
           <button
             onClick={() => setIsOpen(false)}
-            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[rgba(105,145,214,0.2)]"
+            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[var(--color-delete-button-hover-background)]"
           >
             Cancel
           </button>
           <button
             onClick={onDelete}
-            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[rgba(105,145,214,0.2)]"
+            className="flex h-10 w-fit cursor-pointer items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[var(--color-delete-button-hover-background)]"
           >
             Delete
           </button>
