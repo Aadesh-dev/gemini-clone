@@ -29,7 +29,7 @@ const MobileSidebar = ({
       <SheetTrigger></SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[85vw] bg-[var(--color-main-background)] sm:max-w-[85vw]"
+        className="w-[85vw] border-0 bg-[var(--color-main-background)] sm:max-w-[85vw]"
       >
         <div className="fixed top-0 flex h-18 w-full items-center justify-end bg-[var(--color-main-background)] pr-3">
           <div className="mx-2 flex items-center">

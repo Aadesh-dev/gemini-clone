@@ -203,7 +203,7 @@ const Chat = ({
             </h1>
           )}
           <SignedOut>
-            <h1 className="relative bottom-[15%] mx-auto w-[725px] self-center text-center text-[36px] leading-13 font-medium select-none md:text-[45px]">
+            <h1 className="relative bottom-[15%] mx-auto max-w-[725px] self-center text-center text-[36px] leading-13 font-medium select-none md:text-[45px]">
               <span>Meet Gemini,</span>
               <br />
               <span>your personal AI assistant</span>

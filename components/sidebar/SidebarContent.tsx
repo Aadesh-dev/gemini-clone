@@ -170,7 +170,7 @@ const SidebarContent = ({
                   The chats that you see here are temporary, and will not be
                   saved unless you sign in.
                 </p>
-                <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)]" />
+                <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[var(--color-delete-button-hover-background)]" />
               </div>
               {!areMessagesInChat && (
                 <a
