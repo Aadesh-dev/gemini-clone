@@ -9,6 +9,7 @@ import SettingsDialog from "../dialogs/SettingsDialog";
 import DownArrowIcon from "../icons/DownArrowIcon";
 import NewChatIcon from "../icons/NewChatIcon";
 import SignIn from "../SignIn";
+import SettingsIcon from "../icons/SettingsIcon";
 
 const SidebarContent = ({
   userId,
@@ -30,6 +31,7 @@ const SidebarContent = ({
   //State
   const [chatHovered, setChatHovered] = useState(-1);
   const [showMore, setShowMore] = useState(false);
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   //Context
   const chatsContext = useContext(ChatsContext);
@@ -68,6 +70,16 @@ const SidebarContent = ({
   const chatContainerClass = `${
     finalExpanded ? "visible opacity-100" : "invisible opacity-0"
   } ${userId ? "h-[calc(100vh-280px)] md:h-[calc(100vh-232px)]" : "h-[calc(100vh-232px)]"} pb-2 md:mt-4 transition-opacity duration-1000 ease-in overflow-y-auto`;
+
+  const settingsButtonClass = `rounded-[20px] hover:bg-[var(--color-chat-hover-background)] flex items-center h-12 md:h-10 transition-width duration-300 ease-in-out overflow-hidden cursor-pointer disabled:pointer-events-none ${
+    finalExpanded
+      ? "w-[calc(100%-24px)] mx-1 md:mx-3"
+      : "w-10 rounded-full mx-4 justify-center px-2 absolute bottom-7"
+  } ${isSettingsDialogOpen ? "bg-[var(--color-selected-chat-background)]" : ""}`;
+
+  const settingsTextClass = `my-2 text-[14px] transition-opacity duration-300 ease-in-out ${
+    finalExpanded ? "opacity-100 block" : "opacity-0 hidden"
+  } ${isSettingsDialogOpen ? "text-[var(--color-modal-upgrade-button-text)] font-medium" : "text-[var(--color-text-primary)]"}`;
 
   const newChat = () => {
     router.push("/app/");
@@ -210,9 +222,23 @@ const SidebarContent = ({
           </div>
         </>
       )}
-      <SettingsDialog finalExpanded={finalExpanded} />
+      <button
+        className={settingsButtonClass}
+        onClick={() => setIsSettingsDialogOpen(true)}
+      >
+        <span className={finalExpanded ? "mr-4 ml-[14px]" : ""}>
+          <SettingsIcon
+            fill={
+              isSettingsDialogOpen
+                ? "var(--color-modal-upgrade-button-text)"
+                : "var(--color-text-primary)"
+            }
+          />
+        </span>
+        <span className={settingsTextClass}>Settings & help</span>
+      </button>
       <SignedIn>
-        <div className="mb-3 pr-[18px] pl-5 md:hidden">
+        <div className="mt-[6px] mb-3 pr-[18px] pl-5 md:hidden">
           <Link
             href="https://one.google.com/explore-plan/gemini-advanced"
             className="flex h-9 w-fit items-center justify-center gap-2 rounded-[8px] bg-[var(--color-upgrade-button-background)] px-6 text-xs font-medium text-[var(--color-text-tertiary)]"
@@ -227,6 +253,10 @@ const SidebarContent = ({
           </Link>
         </div>
       </SignedIn>
+      <SettingsDialog
+        isOpen={isSettingsDialogOpen}
+        setIsOpen={setIsSettingsDialogOpen}
+      />
     </div>
   );
 };
