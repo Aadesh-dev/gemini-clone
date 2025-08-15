@@ -5,7 +5,7 @@ const DeleteNotification = ({
   data,
 }: ToastContentProps<{ chatTitle: string }>) => {
   return (
-    <div className="w-full text-[14px] leading-5 overflow-ellipsis text-[#f2f2f2]">
+    <div className="w-full text-[14px] leading-5 overflow-ellipsis text-[var(--color-notification-text)]">
       Deleted <b>{data.chatTitle}</b>
     </div>
   );
