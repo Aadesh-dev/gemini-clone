@@ -67,7 +67,7 @@ const SidebarContent = ({
 
   const chatContainerClass = `${
     finalExpanded ? "visible opacity-100" : "invisible opacity-0"
-  } ${userId ? "px-2 md:px-3 h-[calc(100vh-280px)] md:h-[calc(100vh-232px)]" : "px-5 md:px-4 h-[calc(100vh-232px)]"} pb-2 md:mt-4 transition-opacity duration-1000 ease-in overflow-y-scroll`;
+  } ${userId ? "h-[calc(100vh-280px)] md:h-[calc(100vh-232px)]" : "h-[calc(100vh-232px)]"} pb-2 md:mt-4 transition-opacity duration-1000 ease-in overflow-y-auto`;
 
   const newChat = () => {
     router.push("/app/");
@@ -82,7 +82,7 @@ const SidebarContent = ({
         <div
           key={start + index}
           id={chat._id}
-          className="relative text-[14px] text-[var(--color-text-primary)]"
+          className="relative px-2 text-[14px] text-[var(--color-text-primary)] md:px-3"
         >
           <button
             onClick={() => {
@@ -149,7 +149,11 @@ const SidebarContent = ({
         <>
           <div className={chatContainerClass}>
             <div
-              className={userId ? "py-1 pl-3 md:py-2" : "pt-2 pb-[9px] md:pl-3"}
+              className={
+                userId
+                  ? "mx-5 py-1 md:mx-6 md:py-2"
+                  : "mx-5 pt-2 pb-[9px] md:mx-7"
+              }
             >
               <h1
                 className={
@@ -162,7 +166,7 @@ const SidebarContent = ({
               </h1>
             </div>
             <SignedOut>
-              <div className="mb-3 flex flex-col rounded-2xl bg-[var(--color-upgrade-button-background)] px-5 py-4 text-[var(--color-copy-icon)] md:max-w-sm md:text-[var(--color-text-tertiary)]">
+              <div className="mx-5 mb-3 flex flex-col rounded-2xl bg-[var(--color-upgrade-button-background)] px-5 py-4 text-[var(--color-copy-icon)] md:mx-4 md:text-[var(--color-text-tertiary)]">
                 <p className="mb-1 text-sm font-medium">
                   Sign in to start saving your chats
                 </p>
@@ -172,9 +176,9 @@ const SidebarContent = ({
                 </p>
                 <SignIn className="ml-[-10px] flex h-10 w-fit items-center rounded-full px-3 text-center text-sm font-medium text-[var(--color-stop-button)] hover:bg-[var(--color-delete-button-hover-background)]" />
               </div>
-              {!areMessagesInChat && (
+              {chats.length <= 1 && !areMessagesInChat && (
                 <a
-                  className="mt-3 ml-[18px] inline-block text-[14px] leading-5 font-medium text-[var(--color-text-primary)] md:hidden"
+                  className="mt-3 ml-[38px] inline-block text-[14px] leading-5 font-medium text-[var(--color-text-primary)] md:hidden"
                   href="https://gemini.google/about/"
                   target="_blank"
                 >
