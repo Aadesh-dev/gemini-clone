@@ -70,8 +70,8 @@ const DeleteDialog = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         showBackdrop
-        className="top-[50%] left-[50%] max-w-83 translate-x-[-50%] translate-y-[-50%] gap-0 border-none bg-[var(--color-delete-dialog-background)] p-0 text-[14px] md:max-w-150"
-        style={{ borderRadius: 28 }}
+        className="top-[50%] left-[50%] max-w-83 translate-x-[-50%] translate-y-[-50%] gap-0 rounded-[28px] border-none bg-[var(--color-delete-dialog-background)] p-0 text-[14px] sm:rounded-[28px] md:max-w-150"
+        //style={{ borderRadius: 28 }}
       >
         <DialogTitle className="sr-only">Delete chat?</DialogTitle>
         <DialogHeader className="px-6 pt-6 pb-[13px]">
