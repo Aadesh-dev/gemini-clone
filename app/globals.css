@@ -38,6 +38,8 @@
     --color-header-options-icon: #5F6368;
     --color-options-drawer-background: #f0f4f9;
     --color-delete-button-hover-background: rgba(105,145,214,0.2);
+    --color-notification-text: #f2f2f2;
+    --color-notification-background: #303030;
   }
   .dark {
     --color-main-background: #1b1c1d;
@@ -69,6 +71,8 @@
     --color-header-options-icon: rgba(255,255,255,0.87);
     --color-options-drawer-background: #1b1b1b;
     --color-delete-button-hover-background: rgba(168,199,250,0.12);
+    --color-notification-text: #303030;
+    --color-notification-background: #f2f2f2;
   }
 }
 
@@ -101,12 +105,8 @@ ul, ol {
   @apply transition-[width] duration-300 ease-in-out;
 }
 
-.text {
-  @apply text-[#1b1c1d];
-}
-
 .Toastify__toast {
-  @apply py-[14px] pl-4 pr-2 bg-[#303030] min-h-0;
+  @apply py-[14px] pl-4 pr-2 bg-[var(--color-notification-background)] min-h-0;
 }
 
 .Toastify__close-button {
