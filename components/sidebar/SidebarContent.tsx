@@ -120,7 +120,7 @@ const SidebarContent = ({
           </button>
           {chatHovered === start + index && fromDesktop && (
             <div
-              className="absolute top-[2px] right-0 z-10 flex items-center p-1"
+              className="absolute top-[2px] right-3 z-10 flex items-center p-1"
               onMouseEnter={() => {
                 setChatHovered(start + index);
               }}
