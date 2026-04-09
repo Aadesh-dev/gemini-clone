@@ -33,30 +33,6 @@ const Gemini = ({
   const [user, setUser] = useState<UserType | null>(currentUser);
   const [model, setModel] = useState<string>("gemini-2.5-flash");
 
-  // useWindowUnloadEffect(() => {
-  //   if (userID) {
-  //     alert(userID);
-  //     deleteChatsByUserID(userID);
-  //   }
-  // }, true);
-
-  // useEffect(() => {
-  //   if (!userID) return;
-
-  //   const handleUnload = () => {
-  //     deleteChatsByUserID(userID);
-  //   };
-
-  //   // Call on page unload/reload
-  //   window.addEventListener("beforeunload", handleUnload);
-
-  //   // Call on component unmount
-  //   return () => {
-  //     handleUnload();
-  //     window.removeEventListener("beforeunload", handleUnload);
-  //   }
-  // }, [userID]);
-
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <ChatsContext.Provider value={{ chats, setChats }}>
