@@ -51,7 +51,7 @@ export const createChat = async (
 // READ
 export const getTextAnswer = async (prompt: string) => {
   const { text } = await generateText({
-    model: google("gemini-2.5-flash-preview-05-20"),
+    model: google("gemini-2.5-flash"),
     prompt,
   });
 

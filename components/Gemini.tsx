@@ -31,7 +31,7 @@ const Gemini = ({
 }) => {
   const [chats, setChats] = useState<ChatType[] | []>([]);
   const [user, setUser] = useState<UserType | null>(currentUser);
-  const [model, setModel] = useState<string>("gemini-2.5-flash-preview-05-20");
+  const [model, setModel] = useState<string>("gemini-2.5-flash");
 
   // useWindowUnloadEffect(() => {
   //   if (userID) {
