@@ -2,47 +2,37 @@
 
 import { ChatType } from "@/app/types";
 import { getChatsByClerkID } from "@/lib/actions/chat.actions";
+import { updateUser } from "@/lib/actions/user.actions";
 import { ChatsContext, UserContext } from "@/lib/contexts";
 import {
-  fixBrokenMarkdownTables,
-  handleError,
-  stripTableCodeFencesOnly,
+  stripTableCodeFencesOnly
 } from "@/lib/utils";
-import { Message, useChat } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 import { SignedOut } from "@clerk/nextjs";
 import React, { useContext, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import remarkGfm from "remark-gfm";
+import CodeBlock from "./CodeBlock";
 import Input from "./Input";
 import LoadingStarIcon from "./LoadingStarIcon";
-import GeminiStarIcon from "./icons/GeminiStarIcon";
-import { Source_Code_Pro } from "next/font/google";
-import CodeBlock from "./CodeBlock";
 import CloseIcon from "./icons/CloseIcon";
-import axios from "axios";
-
-const code = Source_Code_Pro({
-  weight: ["400", "600"],
-  subsets: ["latin"],
-});
+import GeminiStarIcon from "./icons/GeminiStarIcon";
 
 const Chat = ({
   chatID,
   userId,
   chat,
-  initialMessages,
 }: {
   chatID: string;
   userId: string | null;
   chat: ChatType;
-  initialMessages?: Message[];
 }) => {
   //State
   const [height, setHeight] = useState(24);
   const [showIntroMessage, setShowIntroMessage] = useState(false);
 
   //Other
+  const initialMessages = chat.messages;
   const { input, handleInputChange, handleSubmit, messages, status, stop } =
     useChat({
       id: chatID, // use the provided chat ID
@@ -69,17 +59,9 @@ const Chat = ({
 
   const handleIntroMessageClose = async () => {
     setShowIntroMessage(!showIntroMessage);
-    if (user) {
+    if (userId && user) {
       setUser({ ...user, showIntroMessage: !showIntroMessage });
-
-      try {
-        await axios.put("/api/user", {
-          clerkID: userId,
-          user: { ...user, showIntroMessage: !showIntroMessage },
-        });
-      } catch (error: any) {
-        handleError(error);
-      }
+      await updateUser(userId, { ...user, showIntroMessage: !showIntroMessage });
     }
   };
 
@@ -90,6 +72,7 @@ const Chat = ({
       messages,
       user: chat.user,
     };
+
     if (!chats.length) {
       if (userId) {
         getChatsByClerkID(userId).then((chats) => {
@@ -111,7 +94,7 @@ const Chat = ({
     if (userId) {
       setShowIntroMessage((user && user.showIntroMessage) || false);
     }
-  }, [user, chats]);
+  }, [userId, user]);
 
   return (
     <div className="flex flex-col items-center justify-between">
@@ -119,7 +102,7 @@ const Chat = ({
         <div
           className="w-full overflow-y-auto px-4 pt-4 pb-5"
           style={{
-            height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
+            height: `calc(100vh - ${156 + Math.min(height, 168)}px)`,
           }}
         >
           <div className="mx-auto max-w-[760px] leading-7 text-[var(--color-text-tertiary)]">
@@ -130,7 +113,7 @@ const Chat = ({
                     <div className="ml-13 max-md:mt-3 md:pb-6">
                       <div className="prose mb-2 max-w-[452px] rounded-tl-3xl rounded-tr-[4px] rounded-b-3xl bg-[var(--color-modal-upgrade-button-background)] px-4 py-3">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {fixBrokenMarkdownTables(m.content)}
+                          {m.content}
                         </ReactMarkdown>
                       </div>
                     </div>
@@ -192,7 +175,7 @@ const Chat = ({
         <div
           className="flex w-full justify-center overflow-y-auto pt-4 pr-4 pb-[6px] pl-7"
           style={{
-            height: `calc(100vh - ${156 + (height <= 168 ? height : 168)}px)`,
+            height: `calc(100vh - ${156 + Math.min(height, 168)}px)`,
           }}
         >
           {userId && (
@@ -223,7 +206,7 @@ const Chat = ({
                 , your personal AI assistant
               </p>
               <button
-                className="cursor-pointer rounded-full p-2 hover:bg-[rgba(87,91,95,0.08)] dark:hover:bg-[#3d3f42]"
+                className="cursor-pointer rounded-full p-2 hover:bg-[var(--color-chat-hover-background)]"
                 onClick={handleIntroMessageClose}
               >
                 <CloseIcon />

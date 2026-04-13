@@ -44,7 +44,7 @@ const SidebarContent = ({
     throw new Error("Sidebar must be used within a ChatsContext.Provider");
   }
 
-  const { chats, setChats } = chatsContext;
+  const { chats } = chatsContext;
 
   const id = pathname.split("/")[2];
   const chatIndex = chats.findIndex((c) => c._id === id);
@@ -199,14 +199,14 @@ const SidebarContent = ({
               )}
             </SignedOut>
             {renderChats(0, 5)}
-            {chats.length > 5 && (
+            {chats.filter((chat) => chat.title !== "New Chat").length > 5 && (
               <>
-                <div className="text-[14px] text-[#575B5F]">
+                <div className="text-[14px] text-[var(--color-text-primary)]">
                   <button
                     onClick={() => {
                       setShowMore(!showMore);
                     }}
-                    className="flex w-full cursor-pointer items-center rounded-[20px] px-3 py-2 text-left hover:bg-[rgba(211,227,253,0.5)]"
+                    className="flex w-full cursor-pointer items-center rounded-[20px] px-3 py-2 text-left hover:bg-[var(--color-selected-chat-background)]"
                   >
                     <p className="leading-5 font-medium">
                       {showMore ? "Show less" : "Show more"}

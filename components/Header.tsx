@@ -27,10 +27,10 @@ const Header = () => {
   const windowWidth = useWindowWidth();
 
   if (!chatsContext) {
-    throw new Error("Sidebar must be used within a ChatsContext.Provider");
+    throw new Error("Header must be used within a ChatsContext.Provider");
   }
 
-  const { chats, setChats } = chatsContext;
+  const { chats } = chatsContext;
 
   const id = pathname.split("/")[2];
   const chatIndex = chats.findIndex((c) => c._id === id);

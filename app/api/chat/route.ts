@@ -34,37 +34,3 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
-
-export async function DELETE(req: Request) {
-  try {
-    const { chatID } = await req.json();
-
-    const deletedChat = await deleteChat(chatID);
-
-    if (!deletedChat) {
-      // This case should ideally be handled by deleteChat throwing an error,
-      // but as a fallback, ensure a proper response.
-      return NextResponse.json(
-        { message: "Chat not found or could not be deleted" },
-        { status: 404 },
-      );
-    }
-
-    return NextResponse.json(
-      { message: "Chat deleted successfully", chat: deletedChat },
-      { status: 200 },
-    );
-  } catch (error: any) {
-    if (error.message === "Invalid Chat ID format") {
-      return NextResponse.json({ message: error.message }, { status: 400 });
-    }
-    if (error.message === "Chat not found") {
-      return NextResponse.json({ message: error.message }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}

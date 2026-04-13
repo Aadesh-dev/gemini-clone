@@ -10,14 +10,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!chat) {
     redirect("/app");
   }
-  const initialMessages = chat.messages;
 
   return (
     <Chat
       chatID={id}
       userId={userId}
       chat={chat}
-      initialMessages={initialMessages}
     />
   );
 };

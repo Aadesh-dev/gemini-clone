@@ -5,12 +5,11 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog";
+import { deleteChat } from "@/lib/actions/chat.actions";
 import { ChatsContext } from "@/lib/contexts";
 import { handleError } from "@/lib/utils";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import DeleteNotification from "../DeleteNotification";
@@ -40,9 +39,7 @@ const DeleteDialog = ({
   const onDelete = async () => {
     if (chat) {
       try {
-        await axios.delete("/api/chat", {
-          data: { chatID: chat._id },
-        });
+        await deleteChat(chat._id);
 
         setIsOpen(false);
         setChats((prevChats: ChatType[]) =>
