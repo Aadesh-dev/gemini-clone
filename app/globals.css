@@ -76,8 +76,6 @@
   }
 }
 
-/* Pseudo-classes */
-
 /* Pseudo-elements */
 ::-webkit-scrollbar {
   @apply w-[8px] h-[8px];

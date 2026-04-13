@@ -1,9 +1,9 @@
 "use client";
 
 import { ChatType } from "@/app/types";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { updateUser } from "@/lib/actions/user.actions";
 import { ChatsContext, UserContext } from "@/lib/contexts";
-import { handleError } from "@/lib/utils";
-import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
@@ -11,7 +11,6 @@ import DeleteDialog from "../dialogs/DeleteDialog";
 import HamburgerIcon from "../icons/HamburgerIcon";
 import DesktopSidebar from "./DesktopSidebar";
 import MobileSidebar from "./MobileSidebar";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 const SidebarContainer = ({ userId }: { userId: string | null }) => {
   //State
@@ -54,21 +53,15 @@ const SidebarContainer = ({ userId }: { userId: string | null }) => {
       setUser({ ...user, sidebarExpanded: !expanded });
     }
     if (userId && user) {
-      try {
-        await axios.put("/api/user", {
-          clerkID: userId,
-          user: { ...user, sidebarExpanded: !expanded },
-        });
-      } catch (error: any) {
-        handleError(error);
-      }
+      await updateUser(userId, { ...user, sidebarExpanded: !expanded });
     }
   };
 
   useEffect(() => {
-    const isExpanded = user && user.sidebarExpanded;
+    const isExpanded = user?.sidebarExpanded ?? false;
+
     if (userId && isExpanded !== expanded) {
-      setExpanded(user && user.sidebarExpanded ? user.sidebarExpanded : false);
+      setExpanded(isExpanded);
     }
   }, [user]);
 

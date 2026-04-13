@@ -9,8 +9,8 @@ import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
 import mongoose from "mongoose";
 
-const populateUser = (query: any) =>
-  query.populate({
+const populateUser = (chat: any) =>
+  chat.populate({
     path: "user",
     model: User,
     select: "_id clerkID firstName",
@@ -123,13 +123,11 @@ export const updateChatByID = async (
     await connectToDatabase();
 
     const existingChat = await getChatByID(chatID, guest);
-    //console.log("Existing Chat:", existingChat);
 
     updatedChat = await Chat.findByIdAndUpdate(chatID, {
       ...existingChat,
       ...chat,
     });
-    //console.log("Updated Chat:", updatedChat);
     //revalidatePath(path);
   } catch (error) {
     handleError(error);

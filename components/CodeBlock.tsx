@@ -47,7 +47,7 @@ const CodeBlock = ({ className, children }: CodeBlockProps) => {
     <div className="relative">
       <button
         onClick={handleCopy}
-        className="absolute top-3 right-3 flex cursor-pointer items-center rounded-full p-1 hover:bg-[rgba(87,91,95,0.08)] dark:hover:bg-[#3d3f42]"
+        className="absolute top-3 right-3 flex cursor-pointer items-center rounded-full p-1 hover:bg-[var(--color-chat-hover-background)]"
       >
         <CopyIcon />
       </button>

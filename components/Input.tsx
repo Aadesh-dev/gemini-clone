@@ -2,13 +2,12 @@
 
 import { ChatType } from "@/app/types";
 import { getChatTitle } from "@/lib/actions/chat.actions";
+import { updateUser } from "@/lib/actions/user.actions";
 import { ChatsContext, ModelContext, UserContext } from "@/lib/contexts";
 import { ChatRequestOptions } from "ai";
 import React, { useContext, useRef, useState } from "react";
 import SendIcon from "./icons/SendIcon";
 import StopIcon from "./icons/StopIcon";
-import axios from "axios";
-import { handleError } from "@/lib/utils";
 
 const Input = ({
   chatID,
@@ -45,7 +44,7 @@ const Input = ({
   //State
   const [title, setTitle] = useState(chat.title);
 
-  //chatsContext
+  //Context
   const chatsContext = useContext(ChatsContext);
   const modelContext = useContext(ModelContext);
   const userContext = useContext(UserContext);
@@ -113,17 +112,9 @@ const Input = ({
       setChats(newChats);
     }
 
-    if (userId && user) {
+    if (userId && user && user.showIntroMessage) {
       setUser({ ...user, showIntroMessage: false });
-
-      try {
-        await axios.put("/api/user", {
-          clerkID: userId,
-          user: { ...user, showIntroMessage: false },
-        });
-      } catch (error: any) {
-        handleError(error);
-      }
+      await updateUser(userId, { ...user, showIntroMessage: false });
     }
 
     handleSubmit(event, {

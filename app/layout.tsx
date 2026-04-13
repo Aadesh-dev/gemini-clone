@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider afterSignOutUrl="/logout">
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en">
         <body
           className={`${roboto.className} bg-[var(--color-main-background)] text-[var(--color-text-primary)]`}
         >
